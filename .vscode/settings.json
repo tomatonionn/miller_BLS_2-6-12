@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "unistd.h": "c",
+        "gmp.h": "c",
+        "kadai_2nd.h": "c",
+        "limits": "c",
+        "stdio.h": "c"
+    }
+}
