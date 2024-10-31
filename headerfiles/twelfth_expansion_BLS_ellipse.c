@@ -66,11 +66,11 @@ void efp12_ecd(struct efp12 *R, struct efp12 P, mpz_t p){
 
     // 例外処理 Yp = 0
     struct fp12 zero;fp12_init(&zero); 
-    else if(mpz_sgn(P.y, zero) == 0){
+    if(mpz_sgn(P.y, zero) == 0){
         R->inf = 1;
-        fp12_clear(&zero)
         return;
     }
+    fp12_clear(&zero);
 
     struct fp12 three;fp12_init(&three);mpz_set_str(three.x0.x0.x0.x0, "3", 10);
     struct fp12 lambda, lambda_numerator, lambda_denominator;     // 分子lambda_numerator, 分母lambda_denominator
