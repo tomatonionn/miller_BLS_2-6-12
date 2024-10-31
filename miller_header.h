@@ -129,6 +129,7 @@ void efp12_init(struct efp12 *X);
 void efp12_clear(struct efp12 *X);
 void efp12_printf(const struct efp12 X);
 void efp12_set(struct efp12 *X, struct efp12 Y);
+int efp12_cmp(const struct efp12 X, const struct efp12 Y);
 void efp12_random(struct efp12 *A, struct fp b, mpz_t p, gmp_randstate_t state);
 void efp12_ecd(struct efp12 *R, struct efp12 P, mpz_t p);
 void efp12_eca(struct efp12 *R, struct efp12 P, struct efp12 Q, mpz_t p);
