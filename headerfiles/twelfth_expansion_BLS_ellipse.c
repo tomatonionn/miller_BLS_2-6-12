@@ -25,6 +25,15 @@ void efp12_set(struct efp12 *X, struct efp12 Y){
     X->inf = Y.inf;
 }
 
+int efp12_cmp(const struct efp12 X, const struct efp12 Y){
+    if(fp12_cmp(X.x, Y.x) == 0 && fp12_cmp(X.y, Y.y) == 0){
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
+
 // y^2 = x^3 + b
 void efp12_random(struct efp12 *A, struct fp b, mpz_t p, gmp_randstate_t state){
     struct fp12 temp;fp12_init(&temp);
@@ -55,10 +64,11 @@ void efp12_ecd(struct efp12 *R, struct efp12 P, mpz_t p){
         return;
     }
 
-    // 例外処理
-    else if(mpz_sgn(P.y.x0.x0.x0.x0) == 0 && mpz_sgn(P.y.x0.x0.x1.x0) == 0 && mpz_sgn(P.y.x0.x1.x0.x0) == 0 && mpz_sgn(P.y.x0.x1.x1.x0) == 0 && mpz_sgn(P.y.x0.x2.x0.x0) == 0 && mpz_sgn(P.y.x0.x2.x1.x0) == 0
-         && mpz_sgn(P.y.x1.x0.x0.x0) == 0 && mpz_sgn(P.y.x1.x0.x1.x0) == 0 && mpz_sgn(P.y.x1.x1.x0.x0) == 0 && mpz_sgn(P.y.x1.x1.x1.x0) == 0 && mpz_sgn(P.y.x1.x2.x0.x0) == 0 && mpz_sgn(P.y.x1.x2.x1.x0) == 0){
+    // 例外処理 Yp = 0
+    struct fp12 zero;fp12_init(&zero); 
+    else if(mpz_sgn(P.y, zero) == 0){
         R->inf = 1;
+        fp12_clear(&zero)
         return;
     }
 
@@ -108,18 +118,14 @@ void efp12_eca(struct efp12 *R, struct efp12 P, struct efp12 Q, mpz_t p){
         return;
     }
 
-    // 同点処理
-    else if(mpz_cmp(P.x.x0.x0.x0.x0, Q.x.x0.x0.x0.x0) == 0 && mpz_cmp(P.x.x0.x0.x1.x0, Q.x.x0.x0.x1.x0) == 0 && mpz_cmp(P.x.x0.x1.x0.x0, Q.x.x0.x1.x0.x0) == 0 && mpz_cmp(P.x.x0.x1.x1.x0, Q.x.x0.x1.x1.x0) == 0 && mpz_cmp(P.x.x0.x2.x0.x0, Q.x.x0.x2.x0.x0) == 0 && mpz_cmp(P.x.x0.x2.x1.x0, Q.x.x0.x2.x1.x0) == 0
-         && mpz_cmp(P.y.x0.x0.x0.x0, Q.y.x0.x0.x0.x0) == 0 && mpz_cmp(P.y.x0.x0.x1.x0, Q.y.x0.x0.x1.x0) == 0 && mpz_cmp(P.y.x0.x1.x0.x0, Q.y.x0.x1.x0.x0) == 0 && mpz_cmp(P.y.x0.x1.x1.x0, Q.y.x0.x1.x1.x0) == 0 && mpz_cmp(P.y.x0.x2.x0.x0, Q.y.x0.x2.x0.x0) == 0 && mpz_cmp(P.y.x0.x2.x1.x0, Q.y.x0.x2.x1.x0) == 0
-         && mpz_cmp(P.x.x1.x0.x0.x0, Q.x.x1.x0.x0.x0) == 0 && mpz_cmp(P.x.x1.x0.x1.x0, Q.x.x1.x0.x1.x0) == 0 && mpz_cmp(P.x.x1.x1.x0.x0, Q.x.x1.x1.x0.x0) == 0 && mpz_cmp(P.x.x1.x1.x1.x0, Q.x.x1.x1.x1.x0) == 0 && mpz_cmp(P.x.x1.x2.x0.x0, Q.x.x1.x2.x0.x0) == 0 && mpz_cmp(P.x.x1.x2.x1.x0, Q.x.x1.x2.x1.x0) == 0
-         && mpz_cmp(P.y.x1.x0.x0.x0, Q.y.x1.x0.x0.x0) == 0 && mpz_cmp(P.y.x1.x0.x1.x0, Q.y.x1.x0.x1.x0) == 0 && mpz_cmp(P.y.x1.x1.x0.x0, Q.y.x1.x1.x0.x0) == 0 && mpz_cmp(P.y.x1.x1.x1.x0, Q.y.x1.x1.x1.x0) == 0 && mpz_cmp(P.y.x1.x2.x0.x0, Q.y.x1.x2.x0.x0) == 0 && mpz_cmp(P.y.x1.x2.x1.x0, Q.y.x1.x2.x1.x0) == 0){
+    // 同点処理 P = Q
+    else if(efp12_cmp(P, Q) == 0){
         efp12_ecd(R, P, p);
         return;
     }
 
-    // 例外処理
-    else if(mpz_cmp(P.x.x0.x0.x0.x0, Q.x.x0.x0.x0.x0) == 0 && mpz_cmp(P.x.x0.x0.x1.x0, Q.x.x0.x0.x1.x0) == 0 && mpz_cmp(P.x.x0.x1.x0.x0, Q.x.x0.x1.x0.x0) == 0 && mpz_cmp(P.x.x0.x1.x1.x0, Q.x.x0.x1.x1.x0) == 0 && mpz_cmp(P.x.x0.x2.x0.x0, Q.x.x0.x2.x0.x0) == 0 && mpz_cmp(P.x.x0.x2.x1.x0, Q.x.x0.x2.x1.x0) == 0
-         && mpz_cmp(P.x.x1.x0.x0.x0, Q.x.x1.x0.x0.x0) == 0 && mpz_cmp(P.x.x1.x0.x1.x0, Q.x.x1.x0.x1.x0) == 0 && mpz_cmp(P.x.x1.x1.x0.x0, Q.x.x1.x1.x0.x0) == 0 && mpz_cmp(P.x.x1.x1.x1.x0, Q.x.x1.x1.x1.x0) == 0 && mpz_cmp(P.x.x1.x2.x0.x0, Q.x.x1.x2.x0.x0) == 0 && mpz_cmp(P.x.x1.x2.x1.x0, Q.x.x1.x2.x1.x0) == 0){
+    // 例外処理 Xp = Xq
+    else if(fp12_cmp(P.x, Q.x) == 0){
         R->inf = 1;
         return;
     }
