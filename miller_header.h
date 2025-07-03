@@ -11,13 +11,14 @@
 #include <time.h>
 
 
-// from prime_field.c
+// from fp.c
 typedef struct{
     mpz_t x0;
 }fp_t;
 void fp_init(fp_t *X);
 void fp_clear(fp_t *X);
-void fp_printf(const fp_t X);
+void fp_printf(char *str, const fp_t X);
+void fp_println(char *str, const fp_t X);
 void fp_set(fp_t *S, const fp_t X);
 void make_state(gmp_randstate_t state);
 void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state);
@@ -32,14 +33,15 @@ int fp_legendre(const fp_t a, const mpz_t p);
 void fp_sqrt(fp_t *b, fp_t a, mpz_t p, gmp_randstate_t state);
 
 
-// from secondary_expansion.c
+// from fp2.c
 typedef struct{
     fp_t x0;   // 定数
     fp_t x1;   // ω
 }fp2_t;
 void fp2_init(fp2_t *X);
 void fp2_clear(fp2_t *X);
-void fp2_printf(const fp2_t X);
+void fp2_printf(char *str, const fp2_t X);
+void fp2_println(char *str, const fp2_t X);
 void fp2_set(fp2_t *S, const fp2_t X);
 void fp2_random(fp2_t *X, const mpz_t p, gmp_randstate_t state);
 int fp2_cmp(const fp2_t X, const fp2_t Y);
@@ -55,7 +57,7 @@ int fp2_legendre(const fp2_t X, const mpz_t p);
 void fp2_sqrt(fp2_t *S, const fp2_t X, const mpz_t p, gmp_randstate_t state);
 
 
-// from secondary_expansion_ellipse.c
+// from efp2.c
 typedef struct{
     fp2_t x;
     fp2_t y;
@@ -70,7 +72,7 @@ void efp2_eca(efp2_t *R, efp2_t P, efp2_t Q, mpz_t p);
 void efp2_scm(efp2_t R, efp2_t P, mpz_t s, mpz_t p);
 
 
-// from sixth_expansion.c
+// from fp6.c
 typedef struct{
     fp2_t x0;   // 定数
     fp2_t x1;   // ω
@@ -78,7 +80,8 @@ typedef struct{
 }fp6_t;
 void fp6_init(fp6_t *X);
 void fp6_clear(fp6_t *X);
-void fp6_printf(const fp6_t X);
+void fp6_printf(char *str, const fp6_t X);
+void fp6_println(char *str, const fp6_t X);
 void fp6_set(fp6_t *S, fp6_t temp);
 void fp6_random(fp6_t *X, const mpz_t p, gmp_randstate_t state);
 int fp6_cmp(const fp6_t X, const fp6_t Y);
@@ -96,14 +99,15 @@ int fp6_legendre(const fp6_t X, const mpz_t p);
 void fp6_sqrt(fp6_t *S, const fp6_t X, const mpz_t p, gmp_randstate_t state);
 
 
-// from twelfth_expansion.c 
+// from fp12.c 
 typedef struct{
     fp6_t x0;
     fp6_t x1;
 }fp12_t;
 void fp12_init(fp12_t *X);
 void fp12_clear(fp12_t *X);
-void fp12_printf(const fp12_t X);
+void fp12_printf(char *str, const fp12_t X);
+void fp12_println(char *str, const fp12_t X);
 void fp12_set(fp12_t *S, fp12_t temp);
 void fp12_random(fp12_t *X, const mpz_t p, gmp_randstate_t state);
 int fp12_cmp(const fp12_t X, const fp12_t Y);
@@ -119,7 +123,7 @@ int fp12_legendre(const fp12_t X, const mpz_t p);
 void fp12_sqrt(fp12_t *S, const fp12_t X, const mpz_t p, gmp_randstate_t state);
 
 
-// from twelfth_expansion_BLS_ellipse.c 
+// from efp12.c 
 typedef struct{
     fp12_t x;
     fp12_t y;
@@ -127,8 +131,8 @@ typedef struct{
 }efp12_t;
 void efp12_init(efp12_t *X);
 void efp12_clear(efp12_t *X);
-void efp12_printf(const efp12_t X);
-void efp12_println(const efp12_t X);
+void efp12_printf(char *str, const efp12_t X);
+void efp12_println(char *str, const efp12_t X);
 void efp12_set(efp12_t *X, efp12_t Y);
 void efp12_random(efp12_t *A, fp_t b, mpz_t p, gmp_randstate_t state);
 void efp12_ecd(efp12_t *R, efp12_t P, mpz_t p);

@@ -17,12 +17,22 @@ void fp2_clear(fp2_t *X){
 }
 
 // 表示
-void fp2_printf(const fp2_t X){
+void fp2_printf(char *str, const fp2_t X){
+    printf("%s", str);
     printf("(");
-    fp_printf(X.x0);
+    fp_printf("", X.x0);
     printf(", ");
-    fp_printf(X.x1);
+    fp_printf("", X.x1);
     printf(")");
+}
+
+void fp2_println(char *str, const fp2_t X){
+    printf("%s", str);
+    printf("(");
+    fp_printf("", X.x0);
+    printf(", ");
+    fp_printf("", X.x1);
+    printf(")\n");
 }
 
 // 代入

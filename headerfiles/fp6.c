@@ -20,14 +20,26 @@ void fp6_clear(fp6_t *X){
 }
 
 // 表示
-void fp6_printf(const fp6_t X){
+void fp6_printf(char *str, const fp6_t X){
+    printf("%s", str);
     printf("(");
-    fp2_printf(X.x0);
+    fp2_printf("", X.x0);
     printf(", ");
-    fp2_printf(X.x1);
+    fp2_printf("", X.x1);
     printf(", ");
-    fp2_printf(X.x2);
+    fp2_printf("", X.x2);
     printf(")");
+}
+
+void fp6_println(char *str, const fp6_t X){
+    printf("%s", str);
+    printf("(");
+    fp2_printf("", X.x0);
+    printf(", ");
+    fp2_printf("", X.x1);
+    printf(", ");
+    fp2_printf("", X.x2);
+    printf(")\n");
 }
 
 // 代入

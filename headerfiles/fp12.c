@@ -20,12 +20,22 @@ void fp12_clear(fp12_t *X){
     fp6_clear(&X->x1);
 }
 
-void fp12_printf(const fp12_t X){
+void fp12_printf(char *str, const fp12_t X){
+    printf("%s", str);
     printf("(");
-    fp6_printf(X.x0);
+    fp6_printf("", X.x0);
     printf(", ");
-    fp6_printf(X.x1);
+    fp6_printf("", X.x1);
     printf(")");
+}
+
+void fp12_println(char *str, const fp12_t X){
+    printf("%s", str);
+    printf("(");
+    fp6_printf("", X.x0);
+    printf(", ");
+    fp6_printf("", X.x1);
+    printf(")\n");
 }
 
 void fp12_set(fp12_t *S, fp12_t X){

@@ -11,27 +11,27 @@ void efp12_clear(efp12_t *X){
     fp12_clear(&X->y);
 }
 
-void efp12_printf(const efp12_t X){
+void efp12_printf(char *str, const efp12_t X){
     if (X.inf == 1){
         printf("inf");
         return;
     }
     printf("(");
-    fp12_printf(X.x);
+    fp12_printf("", X.x);
     printf(", ");
-    fp12_printf(X.y);
+    fp12_printf("", X.y);
     printf(")");
 }
 
-void efp12_println(const efp12_t X){
+void efp12_println(char *str, const efp12_t X){
     if (X.inf == 1){
-        printf("inf");
+        printf("inf\n");
         return;
     }
     printf("(");
-    fp12_printf(X.x);
+    fp12_printf("", X.x);
     printf(", ");
-    fp12_printf(X.y);
+    fp12_printf("", X.y);
     printf(")\n");
 }
 

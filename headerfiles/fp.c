@@ -13,8 +13,14 @@ void fp_clear(fp_t *X){
 }
 
 // 表示
-void fp_printf(const fp_t X){
+void fp_printf(char *str, const fp_t X){
+    printf("%s", str);
     gmp_printf("%Zd",X.x0);
+}
+
+void fp_println(char *str, const fp_t X){
+    printf("%s", str);
+    gmp_printf("%Zd\n",X.x0);
 }
 
 // 代入
