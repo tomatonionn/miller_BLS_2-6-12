@@ -1,10 +1,8 @@
 #include "../miller_header.h"
 
-int Mcounter = 0;
-
-void efp_random(struct efp *A, struct fp b, mpz_t p, gmp_randstate_t state){
-    struct fp temp, temp1, temp2;
-    struct efp tempA;
+void efp_random(efp_t *A, fp_t b, mpz_t p, gmp_randstate_t state){
+    fp_t temp, temp1, temp2;
+    efp_t tempA;
     mpz_inits(temp.x0, temp1.x0, temp2.x0, tempA.x.x0, tempA.y.x0, NULL);
     tempA.inf = 0;
  
@@ -25,7 +23,7 @@ void efp_random(struct efp *A, struct fp b, mpz_t p, gmp_randstate_t state){
     A->inf = tempA.inf;
 }
 
-void efp_ecd(struct efp *R, struct efp P, mpz_t p){
+void efp_ecd(efp_t *R, efp_t P, mpz_t p){
     // 無限遠点処理
     if(P.inf == 1){
         return;
@@ -37,8 +35,8 @@ void efp_ecd(struct efp *R, struct efp P, mpz_t p){
     }
     else{
         
-        struct fp three;mpz_init_set_str(three.x0, "3", 10);
-        struct fp lambda, lambda_numerator, lambda_denominator;     // 分子lambda_numerator, 分母lambda_denominator
+        fp_t three;mpz_init_set_str(three.x0, "3", 10);
+        fp_t lambda, lambda_numerator, lambda_denominator;     // 分子lambda_numerator, 分母lambda_denominator
         mpz_inits(lambda.x0, lambda_numerator.x0, lambda_denominator.x0, NULL);
     
         fp_mul(&lambda_numerator, P.x, P.x, p);
@@ -47,7 +45,7 @@ void efp_ecd(struct efp *R, struct efp P, mpz_t p){
         fp_inv(&lambda_denominator, lambda_denominator, p);
         fp_mul(&lambda, lambda_numerator, lambda_denominator, p);
     
-        struct fp temp_Rx, temp_Ry;
+        fp_t temp_Rx, temp_Ry;
         mpz_inits(temp_Rx.x0, temp_Ry.x0, NULL);
 
         fp_mul(&temp_Rx, lambda, lambda, p);
@@ -64,7 +62,7 @@ void efp_ecd(struct efp *R, struct efp P, mpz_t p){
     }
 }
  
-void efp_eca(struct efp *R, struct efp P, struct efp Q, mpz_t p){
+void efp_eca(efp_t *R, efp_t P, efp_t Q, mpz_t p){
     if(P.inf == 1){
         mpz_set(R->x.x0, Q.x.x0);
         mpz_set(R->y.x0, Q.y.x0);
@@ -89,7 +87,7 @@ void efp_eca(struct efp *R, struct efp P, struct efp Q, mpz_t p){
         return;
     }
     
-    struct fp lambda, lambda_numerator, lambda_denominator;     // 分子 : lambda_numerator, 分母 : lambda_denominator
+    fp_t lambda, lambda_numerator, lambda_denominator;     // 分子 : lambda_numerator, 分母 : lambda_denominator
     mpz_inits(lambda.x0, lambda_numerator.x0, lambda_denominator.x0, NULL);
  
     fp_sub(&lambda_numerator, Q.y, P.y, p);
@@ -97,7 +95,7 @@ void efp_eca(struct efp *R, struct efp P, struct efp Q, mpz_t p){
     fp_inv(&lambda_denominator, lambda_denominator, p);
     fp_mul(&lambda, lambda_numerator, lambda_denominator, p);
  
-    struct fp temp_Rx, temp_Ry;
+    fp_t temp_Rx, temp_Ry;
     mpz_inits(temp_Rx.x0, temp_Ry.x0, NULL);
     fp_mul(&temp_Rx, lambda, lambda, p);
     fp_sub(&temp_Rx, temp_Rx, P.x, p);
@@ -113,8 +111,8 @@ void efp_eca(struct efp *R, struct efp P, struct efp Q, mpz_t p){
     
 }
  
-void efp_scm(struct efp *R, struct efp P, mpz_t s, mpz_t p){
-    struct efp tempR;mpz_inits(tempR.x.x0, tempR.y.x0, NULL);tempR.inf = 1;
+void efp_scm(efp_t *R, efp_t P, mpz_t s, mpz_t p){
+    efp_t tempR;mpz_inits(tempR.x.x0, tempR.y.x0, NULL);tempR.inf = 1;
     char *scalar_binary = mpz_get_str (NULL, 2, s);
     size_t len = strlen(scalar_binary);
  
@@ -217,8 +215,8 @@ void rank_number(mpz_t E, int n, mpz_t t, mpz_t p){
     mpz_clears(tn, tn_1, tn_2, temp1, temp2, NULL);
 }
 
-void l_TP(struct fp12 *S, struct efp12 P, struct efp12 Q, struct efp12 T, mpz_t p){
-    struct fp12 temp, temp1, temp2, temp3, temp4;
+void l_TP(fp12_t *S, efp12_t P, efp12_t Q, efp12_t T, mpz_t p){
+    fp12_t temp, temp1, temp2, temp3, temp4;
     fp12_init(&temp);fp12_init(&temp1);fp12_init(&temp2);fp12_init(&temp3);fp12_init(&temp4);
 
     fp12_sub(&temp1, Q.y, P.y, p);  //yQ-yP
@@ -236,21 +234,21 @@ void l_TP(struct fp12 *S, struct efp12 P, struct efp12 Q, struct efp12 T, mpz_t 
     fp12_clear(&temp);fp12_clear(&temp1);fp12_clear(&temp2);fp12_clear(&temp3);fp12_clear(&temp4);
 }
 
-void l_TQ_twist(struct fp12 *S, struct efp12 P, struct efp12 Q, struct efp12 T, mpz_t p){
+void l_TQ_twist(fp12_t *S, efp12_t P, efp12_t Q, efp12_t T, mpz_t p){
     // twist set
-    struct fp2 Qx_twist, Qy_twist;fp2_init(&Qx_twist);fp2_init(&Qy_twist);
-    struct fp2 Tx_twist, Ty_twist;fp2_init(&Tx_twist);fp2_init(&Ty_twist);
+    fp2_t Qx_twist, Qy_twist;fp2_init(&Qx_twist);fp2_init(&Qy_twist);
+    fp2_t Tx_twist, Ty_twist;fp2_init(&Tx_twist);fp2_init(&Ty_twist);
     fp2_set(&Qx_twist, Q.x.x0.x1);fp2_set(&Qy_twist, Q.y.x1.x1);
     fp2_set(&Tx_twist, T.x.x0.x1);fp2_set(&Ty_twist, T.y.x1.x1);
 
-    struct fp2 tmp;fp2_init(&tmp);  // tmp = (Yq - Yt) / (Xq - Xt)
-    struct fp2 tmp1;fp2_init(&tmp1);
+    fp2_t tmp;fp2_init(&tmp);  // tmp = (Yq - Yt) / (Xq - Xt)
+    fp2_t tmp1;fp2_init(&tmp1);
     fp2_sub(&tmp, Qy_twist, Ty_twist, p);     // tmp = Yq - Yt
     fp2_sub(&tmp1, Qx_twist, Tx_twist, p);    // tmp1 = Xq - Xt
     fp2_inv(&tmp1, tmp1, p);
     fp2_mul(&tmp, tmp, tmp1, p);
 
-    struct fp2 S0, S1, S2, tmp_S;
+    fp2_t S0, S1, S2, tmp_S;
     fp2_init(&S0);fp2_init(&S1);fp2_init(&S2);fp2_init(&tmp_S);
 
     fp2_set(&S0, P.y.x0.x0);
@@ -272,8 +270,8 @@ void l_TQ_twist(struct fp12 *S, struct efp12 P, struct efp12 Q, struct efp12 T, 
 
 }
 
-void l_TT(struct fp12 *S, struct efp12 Q, struct efp12 T, mpz_t p){
-    struct fp12 temp, temp1, temp2, temp3, temp4;
+void l_TT(fp12_t *S, efp12_t Q, efp12_t T, mpz_t p){
+    fp12_t temp, temp1, temp2, temp3, temp4;
     fp12_init(&temp);fp12_init(&temp1);fp12_init(&temp2);fp12_init(&temp3);fp12_init(&temp4);
 
     fp12_sub(&temp1, Q.y, T.y, p);
@@ -293,14 +291,14 @@ void l_TT(struct fp12 *S, struct efp12 Q, struct efp12 T, mpz_t p){
     fp12_clear(&temp);fp12_clear(&temp1);fp12_clear(&temp2);fp12_clear(&temp3);fp12_clear(&temp4);
 }
 
-void l_TT_twist(struct fp12 *S, struct efp12 P, struct efp12 T, mpz_t p){
+void l_TT_twist(fp12_t *S, efp12_t P, efp12_t T, mpz_t p){
     // twist set
-    struct fp2 Tx_twist, Ty_twist;fp2_init(&Tx_twist);fp2_init(&Ty_twist);
+    fp2_t Tx_twist, Ty_twist;fp2_init(&Tx_twist);fp2_init(&Ty_twist);
     fp2_set(&Tx_twist, T.x.x0.x1);fp2_set(&Ty_twist, T.y.x1.x1);
 
     // l_TT
-    struct fp2 tmp;fp2_init(&tmp);  // tmp = 3Xt^2 / 2Yt
-    struct fp2 tmp1;fp2_init(&tmp1);
+    fp2_t tmp;fp2_init(&tmp);  // tmp = 3Xt^2 / 2Yt
+    fp2_t tmp1;fp2_init(&tmp1);
     fp2_square(&tmp1, Tx_twist, p);     //tmp1 = Xt^2
     fp2_add(&tmp, tmp1, tmp1, p);
     fp2_add(&tmp, tmp, tmp1, p);
@@ -308,7 +306,7 @@ void l_TT_twist(struct fp12 *S, struct efp12 P, struct efp12 T, mpz_t p){
     fp2_inv(&tmp1, tmp1, p);
     fp2_mul(&tmp, tmp, tmp1, p);
 
-    struct fp2 S0, S1, S2, tmp_S;
+    fp2_t S0, S1, S2, tmp_S;
     fp2_init(&S0);fp2_init(&S1);fp2_init(&S2);fp2_init(&tmp_S);
 
     fp2_set(&S0, P.y.x0.x0);
@@ -328,12 +326,12 @@ void l_TT_twist(struct fp12 *S, struct efp12 P, struct efp12 T, mpz_t p){
     fp2_clear(&S0);fp2_clear(&S1);fp2_clear(&S2);fp2_clear(&tmp_S);
 }
 
-void generate1(struct efp12 *P, struct fp b, mpz_t z, mpz_t r, mpz_t p, gmp_randstate_t state){
-    struct efp tempP;fp_init(&tempP.x);fp_init(&tempP.y);tempP.inf = 0;
+void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p, gmp_randstate_t state){
+    efp_t tempP;fp_init(&tempP.x);fp_init(&tempP.y);tempP.inf = 0;
 
     efp_random(&tempP, b, p, state);
     // gmp_printf("tempP : (%Zd, %Zd)\n", tempP.x.x0, tempP.y.x0);
-    struct fp c1, c2, c3;mpz_inits(c1.x0, c2.x0, c3.x0, NULL);
+    fp_t c1, c2, c3;mpz_inits(c1.x0, c2.x0, c3.x0, NULL);
     fp_mul(&c1, tempP.x, tempP.x, p);
     fp_mul(&c1, c1, tempP.x, p);
     fp_add(&c1, c1, b, p);
@@ -352,13 +350,13 @@ void generate1(struct efp12 *P, struct fp b, mpz_t z, mpz_t r, mpz_t p, gmp_rand
     fp_clear(&tempP.x);fp_clear(&tempP.y);
 }
 
-void generate2(struct efp12 *Q, struct fp b, mpz_t E, mpz_t r, mpz_t p, gmp_randstate_t state){
-    struct efp12 P;
+void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p, gmp_randstate_t state){
+    efp12_t P;
     fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
     efp12_random(&P, b, p, state);
 
     // B定義
-    struct efp12 B;fp12_init(&B.x);fp12_init(&B.y);B.inf = 0;
+    efp12_t B;fp12_init(&B.x);fp12_init(&B.y);B.inf = 0;
     mpz_t temp_r;mpz_init(temp_r);
     mpz_t temp_E;mpz_init(temp_E);
     mpz_mul(temp_r, r, r);
@@ -366,20 +364,20 @@ void generate2(struct efp12 *Q, struct fp b, mpz_t E, mpz_t r, mpz_t p, gmp_rand
     efp12_scm(&B, P, temp_E, p);
     
     // R定義
-    struct efp12 R;fp12_init(&R.x);fp12_init(&R.y);R.inf = 0;
+    efp12_t R;fp12_init(&R.x);fp12_init(&R.y);R.inf = 0;
     // fp12_pow(&R.x, B.x, p, p);
     // fp12_pow(&R.y, B.y, p, p);
     fp12_Frobenius(&R.x, B.x, p);
     fp12_Frobenius(&R.y, B.y, p);
     
     // S定義
-    struct efp12 S;fp12_init(&S.x);fp12_init(&S.y);S.inf = 0;
+    efp12_t S;fp12_init(&S.x);fp12_init(&S.y);S.inf = 0;
     fp12_set(&S.x, B.x);
     fp12_set(&S.y, B.y);
     fp12_neg(&S.y, S.y, p);
     
     // Q計算
-    struct efp12 tempQ;fp12_init(&tempQ.x);fp12_init(&tempQ.y);tempQ.inf = 0;
+    efp12_t tempQ;fp12_init(&tempQ.x);fp12_init(&tempQ.y);tempQ.inf = 0;
     efp12_eca(&tempQ, R, S, p);
     fp12_set(&Q->x, tempQ.x);fp12_set(&Q->y, tempQ.y);
 
@@ -392,14 +390,14 @@ void generate2(struct efp12 *Q, struct fp b, mpz_t E, mpz_t r, mpz_t p, gmp_rand
 
 }
 
-void efp12_eca_twist(struct efp12 *R, struct efp12 P, struct efp12 Q, mpz_t p){
-    struct efp2 P_twist;efp2_init(&P_twist);
+void efp12_eca_twist(efp12_t *R, efp12_t P, efp12_t Q, mpz_t p){
+    efp2_t P_twist;efp2_init(&P_twist);
     fp2_set(&P_twist.x, P.x.x0.x1);fp2_set(&P_twist.y, P.y.x1.x1);
 
-    struct efp2 Q_twist;efp2_init(&Q_twist);
+    efp2_t Q_twist;efp2_init(&Q_twist);
     fp2_set(&Q_twist.x, Q.x.x0.x1);fp2_set(&Q_twist.y, Q.y.x1.x1);
 
-    struct efp2 R_tmp;efp2_init(&R_tmp);
+    efp2_t R_tmp;efp2_init(&R_tmp);
 
     efp2_eca(&R_tmp, P_twist, Q_twist, p);
 
@@ -408,11 +406,11 @@ void efp12_eca_twist(struct efp12 *R, struct efp12 P, struct efp12 Q, mpz_t p){
     efp2_clear(&P_twist);efp2_clear(&Q_twist);efp2_clear(&R_tmp); 
 }
 
-void efp12_ecd_twist(struct efp12 *R, struct efp12 P, mpz_t p){
-    struct efp2 P_twist;efp2_init(&P_twist);
+void efp12_ecd_twist(efp12_t *R, efp12_t P, mpz_t p){
+    efp2_t P_twist;efp2_init(&P_twist);
     fp2_set(&P_twist.x, P.x.x0.x1);fp2_set(&P_twist.y, P.y.x1.x1);
 
-    struct efp2 R_tmp;efp2_init(&R_tmp);
+    efp2_t R_tmp;efp2_init(&R_tmp);
     efp2_ecd(&R_tmp, P_twist, p);
 
     fp2_set(&R->x.x0.x1, R_tmp.x);fp2_set(&R->y.x1.x1, R_tmp.y);
@@ -420,10 +418,10 @@ void efp12_ecd_twist(struct efp12 *R, struct efp12 P, mpz_t p){
     efp2_clear(&P_twist);efp2_clear(&R_tmp);
 }
 
-void optimal_ate_miller(struct fp12 *ans, mpz_t z, struct efp12 P, struct efp12 Q, mpz_t p){
+void optimal_ate_miller(fp12_t *ans, mpz_t z, efp12_t P, efp12_t Q, mpz_t p){
 	// 初期化
-	struct fp12 tempf;fp12_init(&tempf);mpz_set_str(tempf.x0.x0.x0.x0, "1", 10);
-	struct efp12 T;fp12_init(&T.x);fp12_init(&T.y);T.inf = 0;
+	fp12_t tempf;fp12_init(&tempf);mpz_set_str(tempf.x0.x0.x0.x0, "1", 10);
+	efp12_t T;fp12_init(&T.x);fp12_init(&T.y);T.inf = 0;
 	fp12_set(&T.x, Q.x);fp12_set(&T.y, Q.y);
 
     // if(mpz_sgn(z) == -1){
@@ -435,7 +433,7 @@ void optimal_ate_miller(struct fp12 *ans, mpz_t z, struct efp12 P, struct efp12 
     printf("len : %ld\n", len);
     printf("z -> %s\n", z_binary);
 
-    struct fp12 temp1;
+    fp12_t temp1;
     fp12_init(&temp1);
 	for(size_t i = 0; i < (len-1); i ++){
         // printf("%d", z_binary[i+1] - '0');
@@ -463,10 +461,10 @@ void optimal_ate_miller(struct fp12 *ans, mpz_t z, struct efp12 P, struct efp12 
     free(z_binary); z_binary = NULL;
 }
 
-void final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p){
+void final_exponentiation(fp12_t *S, fp12_t f, mpz_t r, mpz_t p){
 	mpz_t temp;mpz_init(temp);
 	// mpz_t temp1;mpz_init(temp1);
-	struct fp12 ans;fp12_init(&ans);
+	fp12_t ans;fp12_init(&ans);
 	mpz_pow_ui(temp, p, 12);
 	mpz_sub_ui(temp, temp, 1);
     // mpz_cdiv_r(temp1, temp, r);
@@ -479,9 +477,9 @@ void final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p){
     mpz_clear(temp);fp12_clear(&ans);
 }
 
-void easy_final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p){
+void easy_final_exponentiation(fp12_t *S, fp12_t f, mpz_t r, mpz_t p){
     //// easy part
-    struct fp12 F, tmp_f, tmp_f1, tmp_f2, tmp_f3;
+    fp12_t F, tmp_f, tmp_f1, tmp_f2, tmp_f3;
     fp12_init(&F);fp12_init(&tmp_f);fp12_init(&tmp_f1);fp12_init(&tmp_f2);fp12_init(&tmp_f3);
     mpz_t s;mpz_init_set_ui(s, 6);
 
@@ -520,9 +518,9 @@ void easy_final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p){
     fp12_clear(&F);fp12_clear(&tmp_f);fp12_clear(&tmp_f1);fp12_clear(&tmp_f2);fp12_clear(&tmp_f3);
 }
 
-void hard_final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p, mpz_t z){
+void hard_final_exponentiation(fp12_t *S, fp12_t f, mpz_t r, mpz_t p, mpz_t z){
     //// easy part
-    struct fp12 F, tmp_f, tmp_f1, tmp_f2, tmp_f3;
+    fp12_t F, tmp_f, tmp_f1, tmp_f2, tmp_f3;
     fp12_init(&F);fp12_init(&tmp_f);fp12_init(&tmp_f1);fp12_init(&tmp_f2);fp12_init(&tmp_f3);
     mpz_t s;mpz_init_set_ui(s, 6);
 
@@ -586,11 +584,11 @@ void hard_final_exponentiation(struct fp12 *S, struct fp12 f, mpz_t r, mpz_t p, 
     fp12_clear(&F);fp12_clear(&tmp_f);fp12_clear(&tmp_f1);fp12_clear(&tmp_f2);fp12_clear(&tmp_f3);
 }
 
-void bilinearity(struct efp12 P, struct efp12 Q, mpz_t a, mpz_t b, mpz_t z, mpz_t r, mpz_t p){
-    struct efp12 tempP, tempQ;
+void bilinearity(efp12_t P, efp12_t Q, mpz_t a, mpz_t b, mpz_t z, mpz_t r, mpz_t p){
+    efp12_t tempP, tempQ;
     fp12_init(&tempP.x);fp12_init(&tempP.y);tempP.inf = 0; 
     fp12_init(&tempQ.x);fp12_init(&tempQ.y);tempQ.inf = 0;
-    struct fp12 f1, f2, f3;
+    fp12_t f1, f2, f3;
     fp12_init(&f1);fp12_init(&f2);fp12_init(&f3);
 
     // １回目
@@ -635,7 +633,7 @@ void bilinearity(struct efp12 P, struct efp12 Q, mpz_t a, mpz_t b, mpz_t z, mpz_
     mpz_clear(s);
 }
 
-
+/*
 int main (void){
     // パラメータ定義
     printf("start\n");
@@ -653,97 +651,129 @@ int main (void){
     rank_number(E, 12, t, p);
     gmp_printf("有利点数:%Zd\n\n", E);
 
-    struct fp b;mpz_init(b.x0);
+    fp_t b;mpz_init(b.x0);
     mpz_set_str(b.x0, "2806781539090543763928146397551071025921865095800381583843579968964127551432039332258992094003963260740981125881345582810061579481053866112", 10);
 
-    struct efp12 R;efp12_init(&R);
+    fp12_t test;fp12_init(&test);
+    fp12_random(&test, p, state);
+    printf("test : ");
+    fp12_printf(test);
+    fp12_t ans1;fp12_init(&ans1);
+    fp12_t ans2;fp12_init(&ans2);
 
-    struct efp12 P;fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
-    generate1(&P, b, z, r, p, state);
+    fp12_sqrt(&ans1, test, p, state);
+    printf("test_sqrt : ");
+    fp12_printf(ans1);
+
+    fp12_square(&ans2, ans1, p);
+    printf("\ntest_sqrt^2 : ");
+    fp12_printf(ans2);
+    printf("\n");
+
+    fp12_sub(&ans2, ans2, test, p);
+    fp12_printf(ans2);
+
+    efp12_t P, Q;
+    efp12_init(&P);
+    efp12_init(&Q);
+
+    efp12_random(&P, b, p, state);
     printf("P : ");
-    efp12_printf(P);
+    efp12_println(P);
+    fp12_Frobenius(&Q.x, P.x, p);
+    fp12_Frobenius(&Q.y, P.y, p);
+    fp12_Frobenius(&Q.x, Q.x, p);
+    fp12_Frobenius(&Q.y, Q.y, p);
+    efp12_println(Q);
+    // efp12_t R;efp12_init(&R);
 
-    struct efp12 Q;fp12_init(&Q.x);fp12_init(&Q.y);Q.inf = 0;
-    generate2(&Q, b, E, r, p, state);
-    printf("Q : ");
-    efp12_printf(Q);
+    // efp12_t P;fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
+    // generate1(&P, b, z, r, p, state);
+    // printf("P : ");
+    // efp12_printf(P);
+
+    // efp12_t Q;fp12_init(&Q.x);fp12_init(&Q.y);Q.inf = 0;
+    // generate2(&Q, b, E, r, p, state);
+    // printf("Q : ");
+    // efp12_printf(Q);
     
-    struct fp12 S;fp12_init(&S);
-    struct fp12 f;fp12_init(&f);
+    // fp12_t S;fp12_init(&S);
+    // fp12_t f;fp12_init(&f);
 
 
-    // // 時間測定
-    // struct timespec ts;
-    // struct tm tm;
-    // long double start_sec, start_nsec, end_sec, end_nsec, exe_time_buf0;
-    // clock_gettime(CLOCK_REALTIME, &ts);
-    // start_sec = ts.tv_sec;
-    // start_nsec = ts.tv_nsec;
-    // int loop = 1000;
-    // for (int i = 0; i < loop; i ++){
-    //     optimal_ate_miller(&f, z, P, Q, p);
-    //     // final_exponentiation(&S, f, r, p);
-    //     hard_final_exponentiation(&S, f, r, p, z);
-    // }
-    // clock_gettime(CLOCK_REALTIME, &ts);
-    // end_sec = ts.tv_sec;
-    // end_nsec = ts.tv_nsec;
-    // exe_time_buf0 = ((end_sec - start_sec) + (end_nsec - start_nsec) / 1000000000.0)*1000.0/loop;
-    // printf("Execution time!! : %Lf[ms]\n", exe_time_buf0);
+    // // // 時間測定
+    // // struct timespec ts;
+    // // struct tm tm;
+    // // long double start_sec, start_nsec, end_sec, end_nsec, exe_time_buf0;
+    // // clock_gettime(CLOCK_REALTIME, &ts);
+    // // start_sec = ts.tv_sec;
+    // // start_nsec = ts.tv_nsec;
+    // // int loop = 1000;
+    // // for (int i = 0; i < loop; i ++){
+    // //     optimal_ate_miller(&f, z, P, Q, p);
+    // //     // final_exponentiation(&S, f, r, p);
+    // //     hard_final_exponentiation(&S, f, r, p, z);
+    // // }
+    // // clock_gettime(CLOCK_REALTIME, &ts);
+    // // end_sec = ts.tv_sec;
+    // // end_nsec = ts.tv_nsec;
+    // // exe_time_buf0 = ((end_sec - start_sec) + (end_nsec - start_nsec) / 1000000000.0)*1000.0/loop;
+    // // printf("Execution time!! : %Lf[ms]\n", exe_time_buf0);
 
 
-    // // 乗算回数測定
-    // int Maverage;
-    // // ミラー
+    // // // 乗算回数測定
+    // // int Maverage;
+    // // // ミラー
+    // // Mcounter = 0;
+    // // for (int i = 0; i < loop; i ++){
+    // //     optimal_ate_miller(&f, z, P, Q, p);
+    // // }
+    // // Maverage = Mcounter / loop;
+    // // printf("ミラーの掛け算の回数 : %d\n", Maverage);
+
+    // // // 最終べき
+    // // Mcounter = 0;
+    // // for (int i = 0; i < loop; i ++){
+    // //     // final_exponentiation(&S, f, r, p);
+    // //     hard_final_exponentiation(&S, f, r, p, z);
+    // // }
+    // // Maverage = Mcounter / loop;
+    // // printf("最終べき掛け算の回数 : %d\n", Maverage);
+
+
+    // optimal_ate_miller(&f, z, P, Q, p);
+    // printf("\nmiller : ");
+    // fp12_printf(f);
+
+    // // final_exponentiation(&S, f, r, p);
+    // // easy_final_exponentiation(&S, f, r, p);
+    // hard_final_exponentiation(&S, f, r, p, z);
+    // printf("\nPARE : ");
+    // fp12_printf(S);
+
+
+
+    // // fp12_t f;fp12_init(&f);
+    // optimal_ate_miller(&f, z, P, Q, p);
+    // printf("\nmiller : ");
+    // fp12_printf(f);
+
+
     // Mcounter = 0;
-    // for (int i = 0; i < loop; i ++){
-    //     optimal_ate_miller(&f, z, P, Q, p);
-    // }
-    // Maverage = Mcounter / loop;
-    // printf("ミラーの掛け算の回数 : %d\n", Maverage);
-
-    // // 最終べき
-    // Mcounter = 0;
-    // for (int i = 0; i < loop; i ++){
-    //     // final_exponentiation(&S, f, r, p);
-    //     hard_final_exponentiation(&S, f, r, p, z);
-    // }
-    // Maverage = Mcounter / loop;
-    // printf("最終べき掛け算の回数 : %d\n", Maverage);
-
-
-    optimal_ate_miller(&f, z, P, Q, p);
-    printf("\nmiller : ");
-    fp12_printf(f);
-
+    // // fp12_t S;fp12_init(&S);
     // final_exponentiation(&S, f, r, p);
-    // easy_final_exponentiation(&S, f, r, p);
-    hard_final_exponentiation(&S, f, r, p, z);
-    printf("\nPARE : ");
-    fp12_printf(S);
+    // printf("\nPARE : ");
+    // fp12_printf(S);
 
 
+    // mpz_t s1, s2;mpz_inits(s1, s2, NULL);
+    // mpz_set_str(s1, "100", 10);
+    // mpz_set_str(s2, "200", 10);
+    // bilinearity(P, Q, s1, s2, z, r, p);
 
-    // struct fp12 f;fp12_init(&f);
-    optimal_ate_miller(&f, z, P, Q, p);
-    printf("\nmiller : ");
-    fp12_printf(f);
-
-
-    Mcounter = 0;
-    // struct fp12 S;fp12_init(&S);
-    final_exponentiation(&S, f, r, p);
-    printf("\nPARE : ");
-    fp12_printf(S);
-
-
-    mpz_t s1, s2;mpz_inits(s1, s2, NULL);
-    mpz_set_str(s1, "100", 10);
-    mpz_set_str(s2, "200", 10);
-    bilinearity(P, Q, s1, s2, z, r, p);
-
-    printf("\ntest\n");
-    struct fp12 W;fp12_init(&W);
-    fp12_random(&W, p, state);
-    fp12_printf(W);
+    // printf("\ntest\n");
+    // fp12_t W;fp12_init(&W);
+    // fp12_random(&W, p, state);
+    // fp12_printf(W);
 }
+*/

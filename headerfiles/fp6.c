@@ -6,21 +6,21 @@
 // g(β) = β^3 - (α + 1)
 
 // 初期化
-void fp6_init(struct fp6 *X){
+void fp6_init(fp6_t *X){
     fp2_init(&X->x0);
     fp2_init(&X->x1);
     fp2_init(&X->x2);
 }
 
 // 解放
-void fp6_clear(struct fp6 *X){
+void fp6_clear(fp6_t *X){
     fp2_clear(&X->x0);
     fp2_clear(&X->x1);
     fp2_clear(&X->x2);
 }
 
 // 表示
-void fp6_printf(const struct fp6 X){
+void fp6_printf(const fp6_t X){
     printf("(");
     fp2_printf(X.x0);
     printf(", ");
@@ -31,21 +31,21 @@ void fp6_printf(const struct fp6 X){
 }
 
 // 代入
-void fp6_set(struct fp6 *S, struct fp6 temp){
+void fp6_set(fp6_t *S, fp6_t temp){
     fp2_set(&S->x0, temp.x0);
     fp2_set(&S->x1, temp.x1);
     fp2_set(&S->x2, temp.x2);
 }
 
 // 生成
-void fp6_random(struct fp6 *X, const mpz_t p, gmp_randstate_t state){
+void fp6_random(fp6_t *X, const mpz_t p, gmp_randstate_t state){
     fp2_random(&X->x0, p, state);
     fp2_random(&X->x1, p, state);
     fp2_random(&X->x2, p, state);
 }
 
 // 比較
-int fp6_cmp(const struct fp6 X, const struct fp6 Y){
+int fp6_cmp(const fp6_t X, const fp6_t Y){
     if(fp2_cmp(X.x0, Y.x0) == 0 && fp2_cmp(X.x1, Y.x1) == 0 && fp2_cmp(X.x2, Y.x2) == 0){
         return 0;
     }
@@ -55,8 +55,8 @@ int fp6_cmp(const struct fp6 X, const struct fp6 Y){
 }
 
 // (α + 1)X
-void a1_xi(struct fp2 *S, const struct fp2 X, const mpz_t p){
-    struct fp2 temp;
+void a1_xi(fp2_t *S, const fp2_t X, const mpz_t p){
+    fp2_t temp;
     fp2_init(&temp);
     fp_sub(&temp.x0, X.x0, X.x1, p);
     fp_add(&temp.x1, X.x0, X.x1, p);
@@ -66,15 +66,15 @@ void a1_xi(struct fp2 *S, const struct fp2 X, const mpz_t p){
 }
 
 // 負数
-void fp6_neg(struct fp6 *S, struct fp6 X, const mpz_t p){
+void fp6_neg(fp6_t *S, fp6_t X, const mpz_t p){
     fp2_neg(&S->x0, X.x0, p);
     fp2_neg(&S->x1, X.x1, p);
     fp2_neg(&S->x2, X.x2, p);
 }
 
 // 加算
-void fp6_add(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t p){
-    struct fp6 temp;fp6_init(&temp);
+void fp6_add(fp6_t *S, const fp6_t X, const fp6_t Y, const mpz_t p){
+    fp6_t temp;fp6_init(&temp);
 
     fp2_add(&temp.x0, X.x0, Y.x0, p);
     fp2_add(&temp.x1, X.x1, Y.x1, p);
@@ -86,8 +86,8 @@ void fp6_add(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t 
 }
 
 // 減算
-void fp6_sub(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t p){
-    struct fp6 temp;fp6_init(&temp);
+void fp6_sub(fp6_t *S, const fp6_t X, const fp6_t Y, const mpz_t p){
+    fp6_t temp;fp6_init(&temp);
 
     fp2_sub(&temp.x0, X.x0, Y.x0, p);
     fp2_sub(&temp.x1, X.x1, Y.x1, p);
@@ -99,8 +99,8 @@ void fp6_sub(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t 
 }
 
 // 乗算
-void fp6_mul(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t p){
-    struct fp2 T0, T1, T2, T3, T3_1, T3_2, T4, T4_1, T4_2, T5, T5_1, T5_2;
+void fp6_mul(fp6_t *S, const fp6_t X, const fp6_t Y, const mpz_t p){
+    fp2_t T0, T1, T2, T3, T3_1, T3_2, T4, T4_1, T4_2, T5, T5_1, T5_2;
     fp2_init(&T0);fp2_init(&T1);fp2_init(&T2);
     fp2_init(&T3);fp2_init(&T3_1);fp2_init(&T3_2);
     fp2_init(&T4);fp2_init(&T4_1);fp2_init(&T4_2);
@@ -123,7 +123,7 @@ void fp6_mul(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t 
     fp2_add(&T5_2, Y.x0, Y.x2, p);
     fp2_mul(&T5, T5_1, T5_2, p);    // T5 = (X0 + X2)*(Y0 + Y2)
 
-    struct fp6 temp;fp6_init(&temp);
+    fp6_t temp;fp6_init(&temp);
 
     fp2_sub(&temp.x0, T3, T1, p);
     fp2_sub(&temp.x0, temp.x0, T2, p);
@@ -149,8 +149,8 @@ void fp6_mul(struct fp6 *S, const struct fp6 X, const struct fp6 Y, const mpz_t 
 }
 
 // ２乗算
-void fp6_square(struct fp6 *S, const struct fp6 X, const mpz_t p){
-    struct fp2 T1, T2, T3, T4, T5, T6;
+void fp6_square(fp6_t *S, const fp6_t X, const mpz_t p){
+    fp2_t T1, T2, T3, T4, T5, T6;
     fp2_init(&T1);fp2_init(&T2);fp2_init(&T3);
     fp2_init(&T4);fp2_init(&T5);fp2_init(&T6);
 
@@ -164,7 +164,7 @@ void fp6_square(struct fp6 *S, const struct fp6 X, const mpz_t p){
     fp2_add(&T6, T6, X.x2, p);
     fp2_square(&T6, T6, p);         // T6 = (X0 + X1 + X2)^2
 
-    struct fp6 temp;fp6_init(&temp);
+    fp6_t temp;fp6_init(&temp);
 
     a1_xi(&temp.x0, T4, p);
     fp2_add(&temp.x0, temp.x0, T2, p);  // S0 = T2 + (α + 1)*T4
@@ -196,10 +196,10 @@ void make_epsilon(mpz_t epsilon, const mpz_t p){
 }
 
 // Frobenius写像
-void fp6_Frobenius(struct fp6 *S, const struct fp6 X, const mpz_t p){
-    struct fp6 tempS;fp6_init(&tempS);
-    struct fp temp;fp_init(&temp);
-    struct fp factor1;fp_init(&factor1);
+void fp6_Frobenius(fp6_t *S, const fp6_t X, const mpz_t p){
+    fp6_t tempS;fp6_init(&tempS);
+    fp_t temp;fp_init(&temp);
+    fp_t factor1;fp_init(&factor1);
     mpz_t two;mpz_init_set_str(two, "2", 10);
 
     // factor2 = 2^(p-1/6)
@@ -208,7 +208,7 @@ void fp6_Frobenius(struct fp6 *S, const struct fp6 X, const mpz_t p){
     mpz_powm(factor1.x0, two, factor1.x0, p);
 
     // factor2 = 2^(p-1/3)
-    struct fp factor2;fp_init(&factor2);
+    fp_t factor2;fp_init(&factor2);
     mpz_sub_ui(factor2.x0, p, 1);
     mpz_cdiv_q_ui(factor2.x0, factor2.x0, 3);
     mpz_powm(factor2.x0, two, factor2.x0, p);
@@ -228,8 +228,8 @@ void fp6_Frobenius(struct fp6 *S, const struct fp6 X, const mpz_t p){
 }
 
 // 逆元
-void fp6_inv(struct fp6 *S, const struct fp6 X, const mpz_t p){
-    struct fp6 XP, XP2, XP3, XP4, XP5, s, T;
+void fp6_inv(fp6_t *S, const fp6_t X, const mpz_t p){
+    fp6_t XP, XP2, XP3, XP4, XP5, s, T;
     fp6_init(&XP);fp6_init(&XP2);fp6_init(&XP3);fp6_init(&XP4);fp6_init(&XP5);
     fp6_init(&s);fp6_init(&T);
 
@@ -246,7 +246,7 @@ void fp6_inv(struct fp6 *S, const struct fp6 X, const mpz_t p){
     fp6_mul(&s, X, T, p);
     fp_inv(&s.x0.x0, s.x0.x0, p);
 
-    struct fp6 temp;
+    fp6_t temp;
     fp6_init(&temp);
 
     fp6_mul(&temp, s, T, p);
@@ -256,8 +256,8 @@ void fp6_inv(struct fp6 *S, const struct fp6 X, const mpz_t p){
     fp6_clear(&s);fp6_clear(&T);fp6_clear(&temp);
 }
 
-void fp6_pow(struct fp6 *S, const struct fp6 X, const mpz_t s, const mpz_t p){
-    struct fp6 temp;
+void fp6_pow(fp6_t *S, const fp6_t X, const mpz_t s, const mpz_t p){
+    fp6_t temp;
     fp6_init(&temp);
     mpz_set_str(temp.x0.x0.x0, "1", 10);
     char *scalar_binary = mpz_get_str (NULL, 2, s);
@@ -275,12 +275,12 @@ void fp6_pow(struct fp6 *S, const struct fp6 X, const mpz_t s, const mpz_t p){
     fp6_clear(&temp);
 }
 
-int fp6_legendre(const struct fp6 X, const mpz_t p){
-    struct fp6 check;
+int fp6_legendre(const fp6_t X, const mpz_t p){
+    fp6_t check;
     fp6_init(&check);
     mpz_t temp;
     mpz_init(temp);
-    struct fp6 one;
+    fp6_t one;
     fp6_init(&one);
     mpz_set_str(one.x0.x0.x0, "1", 10);
     mpz_t two;
@@ -303,7 +303,7 @@ int fp6_legendre(const struct fp6 X, const mpz_t p){
     fp6_clear(&check);
 }
 
-void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t state){
+void fp6_sqrt(fp6_t *S, const fp6_t X, const mpz_t p, gmp_randstate_t state){
     if(fp6_legendre(X, p) == 1){
         // Tonelli-Shanks
         mpz_t temp;
@@ -341,7 +341,7 @@ void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t 
         }
 
         // STEP 2
-        struct fp6 z;fp6_init(&z);
+        fp6_t z;fp6_init(&z);
         fp6_random(&z, p, state);
         while(fp6_legendre(z, p) == 1){
             fp6_random(&z, p, state);
@@ -353,12 +353,12 @@ void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t 
         mpz_init_set(M_0, s);
 
         // c
-        struct fp6 c_0;
+        fp6_t c_0;
         fp6_init(&c_0);
         fp6_pow(&c_0, z, Q, p);
 
         // t
-        struct fp6 t_0;
+        fp6_t t_0;
         fp6_init(&t_0);
         fp6_pow(&t_0, X, Q, p);
 
@@ -369,11 +369,11 @@ void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t 
         mpz_cdiv_q (index, index, two);
         
 
-        struct fp6 R_0;fp6_init(&R_0);
+        fp6_t R_0;fp6_init(&R_0);
         fp6_pow(&R_0, X, index, p);
 
         // その他
-        struct fp6 floor;fp6_init(&floor);
+        fp6_t floor;fp6_init(&floor);
 
         mpz_t index2;
         mpz_init(index2);
@@ -390,7 +390,7 @@ void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t 
 
                 mpz_powm(j2, two, j, p_minus_one);
 
-                struct fp6 ch;
+                fp6_t ch;
                 fp6_init(&ch);
                 fp6_pow(&ch, t_0, j2, p);
 
@@ -423,7 +423,7 @@ void fp6_sqrt(struct fp6 *S, const struct fp6 X, const mpz_t p, gmp_randstate_t 
             t_0.x0.x0.x0, t_0.x0.x1.x0, t_0.x1.x0.x0, t_0.x1.x1.x0, t_0.x2.x0.x0, t_0.x2.x1.x0);
 
             // R_i+1
-            struct fp6 index3;
+            fp6_t index3;
             fp6_init(&index3);
 
             mpz_sub(index2, index2, M_0);

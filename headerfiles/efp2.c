@@ -1,25 +1,25 @@
 #include "../miller_header.h"
 
-void efp2_init(struct efp2 *X){
+void efp2_init(efp2_t *X){
     fp2_init(&X->x);
     fp2_init(&X->y);
     X->inf = 0;
 }
 
-void efp2_clear(struct efp2 *X){
+void efp2_clear(efp2_t *X){
     fp2_clear(&X->x);
     fp2_clear(&X->y);
 }
 
-void efp2_set(struct efp2 *X, struct efp2 Y){
+void efp2_set(efp2_t *X, efp2_t Y){
     fp2_set(&X->x, Y.x);
     fp2_set(&X->y, Y.y);
     X->inf = Y.inf;
 }
 
-// y^2 = x^3 + ax + b
-void efp2_random(struct efp2 A, struct fp2 b, mpz_t p,gmp_randstate_t state){
-    struct fp2 temp, temp1, temp2;
+// y^2 = x^3 + b
+void efp2_random(efp2_t A, fp2_t b, mpz_t p,gmp_randstate_t state){
+    fp2_t temp, temp1, temp2;
     fp2_init(&temp);
     fp2_init(&temp1);
     fp2_init(&temp2);
@@ -56,7 +56,7 @@ void efp2_random(struct efp2 A, struct fp2 b, mpz_t p,gmp_randstate_t state){
 }
 
 // ２倍算
-void efp2_ecd(struct efp2 *R, struct efp2 P, mpz_t p){
+void efp2_ecd(efp2_t *R, efp2_t P, mpz_t p){
     // 無限遠点処理
     if(P.inf == 1){
         return;
@@ -68,9 +68,9 @@ void efp2_ecd(struct efp2 *R, struct efp2 P, mpz_t p){
         return;
     }
  
-    struct fp three;
+    fp_t three;
     mpz_init_set_str(three.x0, "3", 10);
-    struct fp2 lambda, lambda_numerator, lambda_denominator;     // 分子lambda_numerator, 分母lambda_denominator
+    fp2_t lambda, lambda_numerator, lambda_denominator;     // 分子lambda_numerator, 分母lambda_denominator
     mpz_inits(lambda.x0.x0, lambda.x1.x0, NULL);
     mpz_inits(lambda_numerator.x0.x0, lambda_numerator.x1.x0, NULL);
     mpz_inits(lambda_denominator.x0.x0, lambda_denominator.x1.x0, NULL);
@@ -82,13 +82,13 @@ void efp2_ecd(struct efp2 *R, struct efp2 P, mpz_t p){
     fp2_inv(&lambda_denominator, lambda_denominator, p);
     fp2_mul(&lambda, lambda_numerator, lambda_denominator, p);
  
-    struct fp2 temp_Rx;
+    fp2_t temp_Rx;
     mpz_inits(temp_Rx.x0.x0, temp_Rx.x1.x0, NULL);
     fp2_mul(&temp_Rx, lambda, lambda, p);
     fp2_sub(&temp_Rx, temp_Rx, P.x, p);
     fp2_sub(&temp_Rx, temp_Rx, P.x, p);
  
-    struct fp2 temp_Ry;
+    fp2_t temp_Ry;
     mpz_inits(temp_Ry.x0.x0, temp_Ry.x1.x0, NULL);
     fp2_sub(&temp_Ry, P.x, temp_Rx, p);
     fp2_mul(&temp_Ry, temp_Ry, lambda, p);
@@ -101,7 +101,7 @@ void efp2_ecd(struct efp2 *R, struct efp2 P, mpz_t p){
 }
  
 // 加算
-void efp2_eca(struct efp2 *R, struct efp2 P, struct efp2 Q, mpz_t p){
+void efp2_eca(efp2_t *R, efp2_t P, efp2_t Q, mpz_t p){
     if(P.inf == 1){
         fp2_set(&R->x, Q.x);
         fp2_set(&R->y, Q.y);
@@ -126,7 +126,7 @@ void efp2_eca(struct efp2 *R, struct efp2 P, struct efp2 Q, mpz_t p){
         return;
     }
     
-    struct fp2 lambda, lambda_numerator, lambda_denominator;
+    fp2_t lambda, lambda_numerator, lambda_denominator;
     fp2_init(&lambda);fp2_init(&lambda_numerator);fp2_init(&lambda_denominator);
  
     fp2_sub(&lambda_numerator, Q.y, P.y, p);
@@ -134,12 +134,12 @@ void efp2_eca(struct efp2 *R, struct efp2 P, struct efp2 Q, mpz_t p){
     fp2_inv(&lambda_denominator, lambda_denominator, p);
     fp2_mul(&lambda, lambda_numerator, lambda_denominator, p);
  
-    struct fp2 temp_Rx;fp2_init(&temp_Rx);
+    fp2_t temp_Rx;fp2_init(&temp_Rx);
     fp2_mul(&temp_Rx, lambda, lambda, p);
     fp2_sub(&temp_Rx, temp_Rx, P.x, p);
     fp2_sub(&temp_Rx, temp_Rx, Q.x, p);
  
-    struct fp2 temp_Ry;fp2_init(&temp_Ry);
+    fp2_t temp_Ry;fp2_init(&temp_Ry);
     fp2_sub(&temp_Ry, P.x, temp_Rx, p);
     fp2_mul(&temp_Ry, temp_Ry, lambda, p);
     fp2_sub(&temp_Ry, temp_Ry, P.y, p);
@@ -152,7 +152,7 @@ void efp2_eca(struct efp2 *R, struct efp2 P, struct efp2 Q, mpz_t p){
 }
  
 // スカラー倍算
-void efp2_scm(struct efp2 R, struct efp2 P, mpz_t s, mpz_t p){
+void efp2_scm(efp2_t R, efp2_t P, mpz_t s, mpz_t p){
     R.inf = 1;
     char *scalar_binary = mpz_get_str (NULL, 2, s);
     size_t len = strlen(scalar_binary);

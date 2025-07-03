@@ -3,22 +3,22 @@
 extern int Mcounter;
 
 // 初期化
-void fp_init(struct fp *X){
+void fp_init(fp_t *X){
     mpz_init(X->x0);
 }
 
 // 解放
-void fp_clear(struct fp *X){
+void fp_clear(fp_t *X){
     mpz_clear(X->x0);
 }
 
 // 表示
-void fp_printf(const struct fp X){
+void fp_printf(const fp_t X){
     gmp_printf("%Zd",X.x0);
 }
 
 // 代入
-void fp_set(struct fp *S, const struct fp X){
+void fp_set(fp_t *S, const fp_t X){
     mpz_set(S->x0, X.x0);
 }
 
@@ -29,7 +29,7 @@ void make_state(gmp_randstate_t state){
 }
 
 // 元の生成
-void fp_random(struct fp *X, const mpz_t p, gmp_randstate_t state){
+void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state){
     mpz_t temp;mpz_init(temp);
     mpz_urandomm(temp, state, p);
     mpz_set(X->x0, temp);
@@ -37,7 +37,7 @@ void fp_random(struct fp *X, const mpz_t p, gmp_randstate_t state){
 }
 
 // 比較
-int fp_cmp(const struct fp X, const struct fp Y){
+int fp_cmp(const fp_t X, const fp_t Y){
     if(mpz_cmp(X.x0, Y.x0) == 0){
         return 0;
     }
@@ -47,13 +47,13 @@ int fp_cmp(const struct fp X, const struct fp Y){
 }
 
 // 負数
-void fp_neg(struct fp *S, struct fp X, const mpz_t p){
+void fp_neg(fp_t *S, fp_t X, const mpz_t p){
     mpz_neg(S->x0, X.x0);
     mpz_mod(S->x0, S->x0, p);
 }
 
 // 和 S = X + Y
-void fp_add(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
+void fp_add(fp_t *S, const fp_t X, const fp_t Y, const mpz_t p){
     mpz_t temp;mpz_init(temp);
     mpz_add(temp, X.x0, Y.x0);
     mpz_mod(temp, temp, p);
@@ -62,7 +62,7 @@ void fp_add(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
 }
 
 // 差 S = X - Y
-void fp_sub(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
+void fp_sub(fp_t *S, const fp_t X, const fp_t Y, const mpz_t p){
     mpz_t temp;mpz_init(temp);
     mpz_sub(temp, X.x0, Y.x0);
     mpz_mod(temp, temp, p);
@@ -71,7 +71,7 @@ void fp_sub(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
 }
 
 // 積 S = X * Y
-void fp_mul(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
+void fp_mul(fp_t *S, const fp_t X, const fp_t Y, const mpz_t p){
     mpz_t temp;mpz_init(temp);
     mpz_mul(temp, X.x0, Y.x0);
     mpz_mod(temp, temp, p);
@@ -81,7 +81,7 @@ void fp_mul(struct fp *S, const struct fp X, const struct fp Y, const mpz_t p){
 }
 
 // 逆数 S = 1 / X
-void fp_inv(struct fp *S, const struct fp X, const mpz_t p){
+void fp_inv(fp_t *S, const fp_t X, const mpz_t p){
     mpz_t temp;
     mpz_init(temp);
     mpz_invert(temp, X.x0, p);
@@ -91,7 +91,7 @@ void fp_inv(struct fp *S, const struct fp X, const mpz_t p){
 }
 
 // 冪乗 S = X ** s
-void fp_pow(struct fp *S, const struct fp X, const mpz_t s, const mpz_t p){
+void fp_pow(fp_t *S, const fp_t X, const mpz_t s, const mpz_t p){
     mpz_t temp;mpz_init(temp);
     mpz_powm(temp, X.x0, s, p);
     mpz_set(S->x0, temp);
@@ -99,12 +99,12 @@ void fp_pow(struct fp *S, const struct fp X, const mpz_t s, const mpz_t p){
 }
 
 // 平方剰余判定
-int fp_legendre(const struct fp X, const mpz_t p){
+int fp_legendre(const fp_t X, const mpz_t p){
     return mpz_legendre(X.x0, p);
 }
 
 // 1.2.7 平方根計算 b = √a
-void fp_sqrt(struct fp *b, struct fp a, mpz_t p, gmp_randstate_t state){
+void fp_sqrt(fp_t *b, fp_t a, mpz_t p, gmp_randstate_t state){
     if(fp_legendre(a, p) == 1){
         mpz_t temp;
         mpz_init(temp);
@@ -165,7 +165,7 @@ void fp_sqrt(struct fp *b, struct fp a, mpz_t p, gmp_randstate_t state){
             gmp_printf("%Zd - 1 = %Zd * 2^%Zd\n",p,Q,s);
 
             // STEP 2
-            struct fp z;
+            fp_t z;
             mpz_init(z.x0);
             fp_random(&z, p, state);
             while(fp_legendre(z, p) != -1){

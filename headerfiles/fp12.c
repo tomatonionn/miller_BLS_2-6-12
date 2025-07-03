@@ -10,17 +10,17 @@
 // f(γ) = γ^2 - β = 0
 // γ^2 = β
 
-void fp12_init(struct fp12 *X){
+void fp12_init(fp12_t *X){
     fp6_init(&X->x0);
     fp6_init(&X->x1);
 }
 
-void fp12_clear(struct fp12 *X){
+void fp12_clear(fp12_t *X){
     fp6_clear(&X->x0);
     fp6_clear(&X->x1);
 }
 
-void fp12_printf(const struct fp12 X){
+void fp12_printf(const fp12_t X){
     printf("(");
     fp6_printf(X.x0);
     printf(", ");
@@ -28,17 +28,17 @@ void fp12_printf(const struct fp12 X){
     printf(")");
 }
 
-void fp12_set(struct fp12 *S, struct fp12 X){
+void fp12_set(fp12_t *S, fp12_t X){
     fp6_set(&S->x0, X.x0);
     fp6_set(&S->x1, X.x1);
 }
 
-void fp12_random(struct fp12 *X, const mpz_t p, gmp_randstate_t state){
+void fp12_random(fp12_t *X, const mpz_t p, gmp_randstate_t state){
     fp6_random(&X->x0, p, state);
     fp6_random(&X->x1, p, state);
 }
 
-int fp12_cmp(const struct fp12 X, const struct fp12 Y){
+int fp12_cmp(const fp12_t X, const fp12_t Y){
     if(fp6_cmp(X.x0, Y.x0) == 0 && fp6_cmp(X.x1, Y.x1) == 0){
         return 0;
     }
@@ -47,8 +47,8 @@ int fp12_cmp(const struct fp12 X, const struct fp12 Y){
     }
 }
 
-void mulb(struct fp6 *S, const struct fp6 X, const mpz_t p){
-    struct fp6 temp;
+void mulb(fp6_t *S, const fp6_t X, const mpz_t p){
+    fp6_t temp;
     fp6_init(&temp);
 
     fp2_set(&temp.x1, X.x0);
@@ -61,13 +61,13 @@ void mulb(struct fp6 *S, const struct fp6 X, const mpz_t p){
 }
 
 // 負数
-void fp12_neg(struct fp12 *S, struct fp12 X, const mpz_t p){
+void fp12_neg(fp12_t *S, fp12_t X, const mpz_t p){
     fp6_neg(&S->x0, X.x0, p);
     fp6_neg(&S->x1, X.x1, p);
 }
 
-void fp12_add(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mpz_t p){
-    struct fp12 temp;
+void fp12_add(fp12_t *S, const fp12_t X, const fp12_t Y, const mpz_t p){
+    fp12_t temp;
     fp12_init(&temp);
 
     fp6_add(&temp.x0, X.x0, Y.x0, p);
@@ -78,8 +78,8 @@ void fp12_add(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mp
     fp12_clear(&temp);
 }
 
-void fp12_sub(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mpz_t p){
-    struct fp12 temp;
+void fp12_sub(fp12_t *S, const fp12_t X, const fp12_t Y, const mpz_t p){
+    fp12_t temp;
     fp12_init(&temp);
 
     fp6_sub(&temp.x0, X.x0, Y.x0, p);
@@ -90,8 +90,8 @@ void fp12_sub(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mp
     fp12_clear(&temp);
 }
 
-void fp12_mul(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mpz_t p){
-    struct fp6 T1, T2, T2b, T3, T4;
+void fp12_mul(fp12_t *S, const fp12_t X, const fp12_t Y, const mpz_t p){
+    fp6_t T1, T2, T2b, T3, T4;
     fp6_init(&T1);fp6_init(&T2);fp6_init(&T2b);fp6_init(&T3);fp6_init(&T4);
 
     fp6_mul(&T1, X.x0, Y.x0, p);
@@ -100,7 +100,7 @@ void fp12_mul(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mp
     fp6_add(&T3, X.x0, X.x1, p);
     fp6_add(&T4, Y.x0, Y.x1, p);
 
-    struct fp12 temp;
+    fp12_t temp;
     fp12_init(&temp);
 
     fp6_add(&temp.x0, T1, T2b, p);
@@ -114,10 +114,10 @@ void fp12_mul(struct fp12 *S, const struct fp12 X, const struct fp12 Y, const mp
     fp12_clear(&temp);
 }
 
-void fp12_square(struct fp12 *S, const struct fp12 X, const mpz_t p){
-    struct fp12 temp;
+void fp12_square(fp12_t *S, const fp12_t X, const mpz_t p){
+    fp12_t temp;
     fp12_init(&temp);
-    struct fp6 T1, T2;
+    fp6_t T1, T2;
     fp6_init(&T1);fp6_init(&T2);
 
     fp6_square(&T1, X.x0, p);
@@ -133,13 +133,13 @@ void fp12_square(struct fp12 *S, const struct fp12 X, const mpz_t p){
     fp12_clear(&temp);
 }
 
-void fp12_Frobenius(struct fp12 *S, const struct fp12 X, const mpz_t p){
+void fp12_Frobenius(fp12_t *S, const fp12_t X, const mpz_t p){
     // S = [{x0},{(y0),(y1),(y2)}]
     // x0, x1 = fp6_Frobenius(X)
     // y0, y1, y2 = x1 * (1 + α)^{(p - 1) / 6}
-    struct fp6 x0, x1;fp6_init(&x0);fp6_init(&x1);
-    struct fp2 y0, y1, y2;fp2_init(&y0);fp2_init(&y1);fp2_init(&y2);
-    struct fp2 tmp;fp2_init(&tmp);mpz_set_ui(tmp.x0.x0, 1);mpz_set_ui(tmp.x1.x0, 1);   // tmp = (1 + α)
+    fp6_t x0, x1;fp6_init(&x0);fp6_init(&x1);
+    fp2_t y0, y1, y2;fp2_init(&y0);fp2_init(&y1);fp2_init(&y2);
+    fp2_t tmp;fp2_init(&tmp);mpz_set_ui(tmp.x0.x0, 1);mpz_set_ui(tmp.x1.x0, 1);   // tmp = (1 + α)
     mpz_t s;mpz_init(s);mpz_sub_ui(s, p, 1);mpz_cdiv_q_ui(s, s, 6);     // s = (p - 1) / 6
     fp2_pow(&tmp, tmp, s, p);       // tmp = (1 + α)^{(p - 1) / 6}
 
@@ -158,12 +158,12 @@ void fp12_Frobenius(struct fp12 *S, const struct fp12 X, const mpz_t p){
 }
 
 
-void fp12_inv(struct fp12 *S, const struct fp12 X, const mpz_t p){
-    struct fp12 X2;fp12_init(&X2);
+void fp12_inv(fp12_t *S, const fp12_t X, const mpz_t p){
+    fp12_t X2;fp12_init(&X2);
     fp6_set(&X2.x0, X.x0);
     fp6_sub(&X2.x1, X2.x1, X.x1, p);
 
-    struct fp6 Y,Yinv, temp1, temp2, b;
+    fp6_t Y,Yinv, temp1, temp2, b;
     fp6_init(&Y);fp6_init(&temp1);fp6_init(&temp2);fp6_init(&b);fp6_init(&Yinv);
     mpz_set_str(b.x1.x0.x0, "1", 10);
     fp6_square(&temp1, X.x0, p);
@@ -172,7 +172,7 @@ void fp12_inv(struct fp12 *S, const struct fp12 X, const mpz_t p){
     fp6_sub(&Y, temp1, temp2, p);
     fp6_inv(&Yinv, Y, p);
 
-    struct fp12 Y2, temp;fp12_init(&Y2);fp12_init(&temp);
+    fp12_t Y2, temp;fp12_init(&Y2);fp12_init(&temp);
     fp6_set(&Y2.x0, Yinv);
     fp12_mul(&temp, X2, Y2, p);
 
@@ -182,8 +182,8 @@ void fp12_inv(struct fp12 *S, const struct fp12 X, const mpz_t p){
     fp12_clear(&X2);fp12_clear(&Y2);fp12_clear(&temp);
 }
 
-void fp12_pow(struct fp12 *S, const struct fp12 X, const mpz_t s, const mpz_t p){
-    struct fp12 temp;
+void fp12_pow(fp12_t *S, const fp12_t X, const mpz_t s, const mpz_t p){
+    fp12_t temp;
     fp12_init(&temp);
     mpz_set_str(temp.x0.x0.x0.x0, "1", 10);
     char *scalar_binary = mpz_get_str(NULL, 2, s);
@@ -201,12 +201,12 @@ void fp12_pow(struct fp12 *S, const struct fp12 X, const mpz_t s, const mpz_t p)
     fp12_clear(&temp);
 }
 
-int fp12_legendre(const struct fp12 X, const mpz_t p){
-    struct fp12 check;
+int fp12_legendre(const fp12_t X, const mpz_t p){
+    fp12_t check;
     fp12_init(&check);
     mpz_t temp;
     mpz_init(temp);
-    struct fp12 one;
+    fp12_t one;
     fp12_init(&one);
     mpz_set_str(one.x0.x0.x0.x0, "1", 10);
 
@@ -232,7 +232,7 @@ int fp12_legendre(const struct fp12 X, const mpz_t p){
     fp12_clear(&one);
 }
 
-void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate_t state){
+void fp12_sqrt(fp12_t *S, const fp12_t X, const mpz_t p, gmp_randstate_t state){
     if(fp12_legendre(X, p) == 1){
         printf("rresidue!\n");
         
@@ -252,7 +252,7 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
             mpz_init(index);
             mpz_t one;
             mpz_init_set_str(one, "1", 10);
-            struct fp12 temp;
+            fp12_t temp;
             fp12_init(&temp);
 
             mpz_add(index, p, one);
@@ -306,7 +306,7 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
             }
 
             // STEP 2
-            struct fp12 z;
+            fp12_t z;
             fp12_init(&z);
             fp12_random(&z, p, state);
             while(fp12_legendre(z, p) == 1){
@@ -319,12 +319,12 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
             mpz_init_set(M_0, s);
 
             // c
-            struct fp12 c_0;
+            fp12_t c_0;
             fp12_init(&c_0);
             fp12_pow(&c_0, z, Q, p);
 
             // t
-            struct fp12 t_0;
+            fp12_t t_0;
             fp12_init(&t_0);
             fp12_pow(&t_0, X, Q, p);
            
@@ -335,12 +335,12 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
             mpz_cdiv_q (index, index, two);
 
 
-            struct fp12 R_0;
+            fp12_t R_0;
             fp12_init(&R_0);
             fp12_pow(&R_0, X, index, p);
             
             // その他
-            struct fp12 floor;
+            fp12_t floor;
             fp12_init(&floor);
 
             mpz_t index2;
@@ -358,7 +358,7 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
 
                     mpz_powm(j2, two, j, p_minus_one);
 
-                    struct fp12 ch;
+                    fp12_t ch;
                     fp12_init(&ch);
                     fp12_pow(&ch, t_0, j2, p);
 
@@ -388,7 +388,7 @@ void fp12_sqrt(struct fp12 *S, const struct fp12 X, const mpz_t p, gmp_randstate
                 fp12_mul(&t_0, t_0, c_0, p);
 
                 // R_i+1
-                struct fp12 index3;
+                fp12_t index3;
                 fp12_init(&index3);
 
                 mpz_sub(index2, index2, M_0);
