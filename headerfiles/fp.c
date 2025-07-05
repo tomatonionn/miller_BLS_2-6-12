@@ -28,20 +28,6 @@ void fp_set(fp_t *S, const fp_t X){
     mpz_set(S->x0, X.x0);
 }
 
-// シード設定
-// void make_state(gmp_randstate_t state){
-//     gmp_randinit_mt (state);
-//     gmp_randseed_ui(state, time(NULL));
-// }
-
-// // 元の生成
-// void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state){
-//     mpz_t temp;mpz_init(temp);
-//     mpz_urandomm(temp, state, p);
-//     mpz_set(X->x0, temp);
-//     mpz_clear(temp);
-// }
-
 void fp_random(fp_t *X, const mpz_t p) {
     static gmp_randstate_t state;
 

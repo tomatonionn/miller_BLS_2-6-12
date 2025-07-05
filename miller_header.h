@@ -20,8 +20,6 @@ void fp_clear(fp_t *X);
 void fp_printf(char *str, const fp_t X);
 void fp_println(char *str, const fp_t X);
 void fp_set(fp_t *S, const fp_t X);
-// void make_state(gmp_randstate_t state);
-// void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state);
 void fp_random(fp_t *X, const mpz_t p);
 int fp_cmp(const fp_t X, const fp_t Y);
 void fp_neg(fp_t *S, fp_t X, const mpz_t p);
