@@ -353,44 +353,64 @@ void generate1(efp12_t *P, fp_t b, mpz_t E, mpz_t r, mpz_t p){
     fp_clear(&tempP.x);fp_clear(&tempP.y);
 }
 
-void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p){
-    efp12_t P;
-    fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
-    efp12_random(&P, b, p);
+// void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p){
+//     efp12_t P;
+//     fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
+//     efp12_random(&P, b, p);
 
-    // B定義
-    efp12_t B;fp12_init(&B.x);fp12_init(&B.y);B.inf = 0;
-    mpz_t temp_r;mpz_init(temp_r);
-    mpz_t temp_E;mpz_init(temp_E);
-    mpz_mul(temp_r, r, r);
-    mpz_cdiv_q (temp_E, E, temp_r);
-    efp12_scm(&B, P, temp_E, p);
+//     // B定義
+//     efp12_t B;fp12_init(&B.x);fp12_init(&B.y);B.inf = 0;
+//     mpz_t temp_r;mpz_init(temp_r);
+//     mpz_t temp_E;mpz_init(temp_E);
+//     mpz_mul(temp_r, r, r);
+//     mpz_cdiv_q (temp_E, E, temp_r);
+//     efp12_scm(&B, P, temp_E, p);
     
-    // R定義
-    efp12_t R;fp12_init(&R.x);fp12_init(&R.y);R.inf = 0;
-    // fp12_pow(&R.x, B.x, p, p);
-    // fp12_pow(&R.y, B.y, p, p);
-    fp12_Frobenius(&R.x, B.x, p);
-    fp12_Frobenius(&R.y, B.y, p);
+//     // R定義
+//     efp12_t R;fp12_init(&R.x);fp12_init(&R.y);R.inf = 0;
+//     // fp12_pow(&R.x, B.x, p, p);
+//     // fp12_pow(&R.y, B.y, p, p);
+//     fp12_Frobenius(&R.x, B.x, p);
+//     fp12_Frobenius(&R.y, B.y, p);
     
-    // S定義
-    efp12_t S;fp12_init(&S.x);fp12_init(&S.y);S.inf = 0;
-    fp12_set(&S.x, B.x);
-    fp12_set(&S.y, B.y);
-    fp12_neg(&S.y, S.y, p);
+//     // S定義
+//     efp12_t S;fp12_init(&S.x);fp12_init(&S.y);S.inf = 0;
+//     fp12_set(&S.x, B.x);
+//     fp12_set(&S.y, B.y);
+//     fp12_neg(&S.y, S.y, p);
     
-    // Q計算
-    efp12_t tempQ;fp12_init(&tempQ.x);fp12_init(&tempQ.y);tempQ.inf = 0;
-    efp12_eca(&tempQ, R, S, p);
-    fp12_set(&Q->x, tempQ.x);fp12_set(&Q->y, tempQ.y);
+//     // Q計算
+//     efp12_t tempQ;fp12_init(&tempQ.x);fp12_init(&tempQ.y);tempQ.inf = 0;
+//     efp12_eca(&tempQ, R, S, p);
+//     fp12_set(&Q->x, tempQ.x);fp12_set(&Q->y, tempQ.y);
 
-    mpz_clears(temp_r, temp_E, NULL);
-    fp12_clear(&P.x);fp12_clear(&P.y);
-    fp12_clear(&B.x);fp12_clear(&B.y);
-    fp12_clear(&R.x);fp12_clear(&R.y);
-    fp12_clear(&S.x);fp12_clear(&S.y);
-    fp12_clear(&tempQ.x);fp12_clear(&tempQ.y);
+//     mpz_clears(temp_r, temp_E, NULL);
+//     fp12_clear(&P.x);fp12_clear(&P.y);
+//     fp12_clear(&B.x);fp12_clear(&B.y);
+//     fp12_clear(&R.x);fp12_clear(&R.y);
+//     fp12_clear(&S.x);fp12_clear(&S.y);
+//     fp12_clear(&tempQ.x);fp12_clear(&tempQ.y);
 
+// }
+
+void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p) {
+  efp12_t random_P, P, frobenius_P;
+  efp12_init(&random_P);
+  efp12_init(&P);
+  efp12_init(&frobenius_P);
+  mpz_t exp;
+  mpz_init(exp);
+
+  efp12_random(&random_P, b, p);
+  mpz_pow_ui(exp, r, 2);
+  mpz_tdiv_q(exp, E, exp);
+  efp12_scm(&P, random_P, exp, p);
+  fp12_Frobenius(&frobenius_P.x, P.x, p);
+  fp12_Frobenius(&frobenius_P.y, P.y, p);
+  fp12_neg(&P.y, P.y, p);
+  efp12_eca(Q, P, frobenius_P, p);
+
+  mpz_clear(exp);
 }
 
 void efp12_eca_twist(efp12_t *R, efp12_t P, efp12_t Q, mpz_t p){
