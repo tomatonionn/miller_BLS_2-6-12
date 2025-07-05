@@ -42,9 +42,9 @@ void fp2_set(fp2_t *S, const fp2_t X){
 }
 
 // 生成
-void fp2_random(fp2_t *X, const mpz_t p, gmp_randstate_t state){
-    fp_random(&X->x0, p, state);
-    fp_random(&X->x1, p, state);
+void fp2_random(fp2_t *X, const mpz_t p){
+    fp_random(&X->x0, p);
+    fp_random(&X->x1, p);
 }
 
 // 比較
@@ -202,7 +202,7 @@ int fp2_legendre(const fp2_t X, const mpz_t p){
     fp2_clear(&one);fp2_clear(&check);
 }
 
-void fp2_sqrt(fp2_t *S, const fp2_t X, const mpz_t p, gmp_randstate_t state){
+void fp2_sqrt(fp2_t *S, const fp2_t X, const mpz_t p){
     if(fp2_legendre(X, p) == 1){
         // Tonelli-Shanks
         mpz_t temp;
@@ -244,9 +244,9 @@ void fp2_sqrt(fp2_t *S, const fp2_t X, const mpz_t p, gmp_randstate_t state){
         // STEP 2
         fp2_t z;
         mpz_inits(z.x0.x0, z.x1.x0, NULL);
-        fp2_random(&z, p, state);
+        fp2_random(&z, p);
         while(fp2_legendre(z, p) == 1){
-            fp2_random(&z, p, state);
+            fp2_random(&z, p);
         }
 
         gmp_printf("z = %Zdw + %Zd\n",z.x1.x0, z.x0.x0);

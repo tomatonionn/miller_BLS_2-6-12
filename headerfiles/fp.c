@@ -29,17 +29,34 @@ void fp_set(fp_t *S, const fp_t X){
 }
 
 // シード設定
-void make_state(gmp_randstate_t state){
-    gmp_randinit_mt (state);
-    gmp_randseed_ui(state, time(NULL));
-}
+// void make_state(gmp_randstate_t state){
+//     gmp_randinit_mt (state);
+//     gmp_randseed_ui(state, time(NULL));
+// }
 
-// 元の生成
-void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state){
-    mpz_t temp;mpz_init(temp);
-    mpz_urandomm(temp, state, p);
-    mpz_set(X->x0, temp);
-    mpz_clear(temp);
+// // 元の生成
+// void fp_random(fp_t *X, const mpz_t p, gmp_randstate_t state){
+//     mpz_t temp;mpz_init(temp);
+//     mpz_urandomm(temp, state, p);
+//     mpz_set(X->x0, temp);
+//     mpz_clear(temp);
+// }
+
+void fp_random(fp_t *X, const mpz_t p) {
+    static gmp_randstate_t state;
+
+    gmp_randinit_default(state);
+    unsigned long seed;
+    FILE *f = fopen("/dev/urandom", "rb");
+    if (f && fread(&seed, sizeof(seed), 1, f) == 1) {
+        gmp_randseed_ui(state, seed);
+    } else {
+        gmp_randseed_ui(state, (unsigned long)time(NULL));
+    }
+    if (f) fclose(f);
+
+
+    mpz_urandomm(X->x0, state, p);  // 0 <= a < p
 }
 
 // 比較
@@ -110,7 +127,7 @@ int fp_legendre(const fp_t X, const mpz_t p){
 }
 
 // 1.2.7 平方根計算 b = √a
-void fp_sqrt(fp_t *b, fp_t a, mpz_t p, gmp_randstate_t state){
+void fp_sqrt(fp_t *b, fp_t a, mpz_t p){
     if(fp_legendre(a, p) == 1){
         mpz_t temp;
         mpz_init(temp);
@@ -173,9 +190,9 @@ void fp_sqrt(fp_t *b, fp_t a, mpz_t p, gmp_randstate_t state){
             // STEP 2
             fp_t z;
             mpz_init(z.x0);
-            fp_random(&z, p, state);
+            fp_random(&z, p);
             while(fp_legendre(z, p) != -1){
-                fp_random(&z, p, state);
+                fp_random(&z, p);
             }
 
             gmp_printf("z = %Zd\n",z);

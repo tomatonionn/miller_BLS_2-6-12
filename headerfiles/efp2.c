@@ -18,14 +18,14 @@ void efp2_set(efp2_t *X, efp2_t Y){
 }
 
 // y^2 = x^3 + b
-void efp2_random(efp2_t A, fp2_t b, mpz_t p,gmp_randstate_t state){
+void efp2_random(efp2_t A, fp2_t b, mpz_t p){
     fp2_t temp, temp1, temp2;
     fp2_init(&temp);
     fp2_init(&temp1);
     fp2_init(&temp2);
 
     while(true){
-        fp2_random(&A.x, p, state);
+        fp2_random(&A.x, p);
         fp2_mul(&temp1, A.x, A.x, p);
         fp2_mul(&temp1, temp1, A.x, p);
         fp2_add(&temp, temp1, temp2, p);
@@ -33,7 +33,7 @@ void efp2_random(efp2_t A, fp2_t b, mpz_t p,gmp_randstate_t state){
 
         // 平方剰余判定
         if(fp2_legendre(temp, p) == 1){
-            fp2_sqrt(&A.y, temp, p, state);
+            fp2_sqrt(&A.y, temp, p);
  
             // y, -y のどちらを出力するか
             gmp_randstate_t state;
@@ -43,7 +43,7 @@ void efp2_random(efp2_t A, fp2_t b, mpz_t p,gmp_randstate_t state){
             seed = time(NULL); // 現在時刻をシードにする例
             gmp_randinit_default(state); // gmp_randinit_defaultにstateを渡します
             gmp_randseed_ui(state, seed); // 乱数のシードを設定します
-            mpz_urandomb(rand, state, 1);
+            mpz_urandomb(rand, state, 1); // 0または1の乱数を生成します
             if(mpz_sgn(rand) == 0){
                 mpz_neg(A.y.x0.x0, A.y.x0.x0);
                 mpz_mod(A.y.x0.x0, A.y.x0.x0, p);

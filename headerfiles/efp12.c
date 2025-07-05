@@ -51,19 +51,19 @@ int efp12_cmp(const efp12_t X, const efp12_t Y){
 }
 
 // y^2 = x^3 + b
-void efp12_random(efp12_t *A, fp_t b, mpz_t p, gmp_randstate_t state){
+void efp12_random(efp12_t *A, fp_t b, mpz_t p){
     fp12_t temp;fp12_init(&temp);
     efp12_t tempA;fp12_init(&tempA.x);fp12_init(&tempA.y);tempA.inf = 0;
 
     while(true){
-        fp12_random(&tempA.x, p, state);
+        fp12_random(&tempA.x, p);
         fp12_mul(&temp, tempA.x, tempA.x, p);
         fp12_mul(&temp, temp, tempA.x, p);
         fp_add(&temp.x0.x0.x0, temp.x0.x0.x0, b, p);
  
         // 平方剰余判定
         if(fp12_legendre(temp, p) == 1){
-            fp12_sqrt(&tempA.y, temp, p, state);
+            fp12_sqrt(&tempA.y, temp, p);
             fp12_set(&A->x, tempA.x);fp12_set(&A->y, tempA.y);
 
             fp12_clear(&temp);fp12_clear(&tempA.x);fp12_clear(&tempA.y);

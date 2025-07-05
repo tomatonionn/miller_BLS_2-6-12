@@ -43,9 +43,9 @@ void fp12_set(fp12_t *S, fp12_t X){
     fp6_set(&S->x1, X.x1);
 }
 
-void fp12_random(fp12_t *X, const mpz_t p, gmp_randstate_t state){
-    fp6_random(&X->x0, p, state);
-    fp6_random(&X->x1, p, state);
+void fp12_random(fp12_t *X, const mpz_t p){
+    fp6_random(&X->x0, p);
+    fp6_random(&X->x1, p);
 }
 
 int fp12_cmp(const fp12_t X, const fp12_t Y){
@@ -242,9 +242,9 @@ int fp12_legendre(const fp12_t X, const mpz_t p){
     fp12_clear(&one);
 }
 
-void fp12_sqrt(fp12_t *S, const fp12_t X, const mpz_t p, gmp_randstate_t state){
+void fp12_sqrt(fp12_t *S, const fp12_t X, const mpz_t p){
     if(fp12_legendre(X, p) == 1){
-        printf("rresidue!\n");
+        // printf("rresidue!\n");
         
         mpz_t check;mpz_init(check);
         mpz_t three;mpz_init_set_str(three, "3", 10);
@@ -318,9 +318,9 @@ void fp12_sqrt(fp12_t *S, const fp12_t X, const mpz_t p, gmp_randstate_t state){
             // STEP 2
             fp12_t z;
             fp12_init(&z);
-            fp12_random(&z, p, state);
+            fp12_random(&z, p);
             while(fp12_legendre(z, p) == 1){
-                fp12_random(&z, p, state);
+                fp12_random(&z, p);
             }
 
             // STEP 3 : 初期値

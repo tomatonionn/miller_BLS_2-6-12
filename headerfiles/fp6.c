@@ -50,10 +50,10 @@ void fp6_set(fp6_t *S, fp6_t temp){
 }
 
 // 生成
-void fp6_random(fp6_t *X, const mpz_t p, gmp_randstate_t state){
-    fp2_random(&X->x0, p, state);
-    fp2_random(&X->x1, p, state);
-    fp2_random(&X->x2, p, state);
+void fp6_random(fp6_t *X, const mpz_t p){
+    fp2_random(&X->x0, p);
+    fp2_random(&X->x1, p);
+    fp2_random(&X->x2, p);
 }
 
 // 比較
@@ -315,7 +315,7 @@ int fp6_legendre(const fp6_t X, const mpz_t p){
     fp6_clear(&check);
 }
 
-void fp6_sqrt(fp6_t *S, const fp6_t X, const mpz_t p, gmp_randstate_t state){
+void fp6_sqrt(fp6_t *S, const fp6_t X, const mpz_t p){
     if(fp6_legendre(X, p) == 1){
         // Tonelli-Shanks
         mpz_t temp;
@@ -354,9 +354,9 @@ void fp6_sqrt(fp6_t *S, const fp6_t X, const mpz_t p, gmp_randstate_t state){
 
         // STEP 2
         fp6_t z;fp6_init(&z);
-        fp6_random(&z, p, state);
+        fp6_random(&z, p);
         while(fp6_legendre(z, p) == 1){
-            fp6_random(&z, p, state);
+            fp6_random(&z, p);
         }
 
         // STEP 3 : 初期値

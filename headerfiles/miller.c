@@ -1,20 +1,20 @@
 #include "../miller_header.h"
 
-void efp_random(efp_t *A, fp_t b, mpz_t p, gmp_randstate_t state){
+void efp_random(efp_t *A, fp_t b, mpz_t p){
     fp_t temp, temp1, temp2;
     efp_t tempA;
     mpz_inits(temp.x0, temp1.x0, temp2.x0, tempA.x.x0, tempA.y.x0, NULL);
     tempA.inf = 0;
  
     while(true){
-        fp_random(&tempA.x, p, state);
+        fp_random(&tempA.x, p);
         fp_mul(&temp1, tempA.x, tempA.x, p);
         fp_mul(&temp1, temp1, tempA.x, p);
         fp_add(&temp, temp1, b, p);
  
         // 平方剰余判定
         if(fp_legendre(temp, p) == 1){
-            fp_sqrt(&tempA.y, temp, p, state);
+            fp_sqrt(&tempA.y, temp, p);
             break;
         }
     }
@@ -326,10 +326,10 @@ void l_TT_twist(fp12_t *S, efp12_t P, efp12_t T, mpz_t p){
     fp2_clear(&S0);fp2_clear(&S1);fp2_clear(&S2);fp2_clear(&tmp_S);
 }
 
-void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p, gmp_randstate_t state){
+void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p){
     efp_t tempP;fp_init(&tempP.x);fp_init(&tempP.y);tempP.inf = 0;
 
-    efp_random(&tempP, b, p, state);
+    efp_random(&tempP, b, p);
     // gmp_printf("tempP : (%Zd, %Zd)\n", tempP.x.x0, tempP.y.x0);
     fp_t c1, c2, c3;mpz_inits(c1.x0, c2.x0, c3.x0, NULL);
     fp_mul(&c1, tempP.x, tempP.x, p);
@@ -350,10 +350,10 @@ void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p, gmp_randstate_t st
     fp_clear(&tempP.x);fp_clear(&tempP.y);
 }
 
-void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p, gmp_randstate_t state){
+void generate2(efp12_t *Q, fp_t b, mpz_t E, mpz_t r, mpz_t p){
     efp12_t P;
     fp12_init(&P.x);fp12_init(&P.y);P.inf = 0;
-    efp12_random(&P, b, p, state);
+    efp12_random(&P, b, p);
 
     // B定義
     efp12_t B;fp12_init(&B.x);fp12_init(&B.y);B.inf = 0;
