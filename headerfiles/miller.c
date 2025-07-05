@@ -326,27 +326,30 @@ void l_TT_twist(fp12_t *S, efp12_t P, efp12_t T, mpz_t p){
     fp2_clear(&S0);fp2_clear(&S1);fp2_clear(&S2);fp2_clear(&tmp_S);
 }
 
-void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p){
+// void generate1(efp12_t *P, fp_t b, mpz_t z, mpz_t r, mpz_t p){
+//     efp_t tempP;fp_init(&tempP.x);fp_init(&tempP.y);tempP.inf = 0;
+
+//     efp_random(&tempP, b, p);
+//     mpz_t temp_E;mpz_init(temp_E);
+//     mpz_sub(temp_E, p, z);mpz_cdiv_q (temp_E, temp_E, r);
+//     // gmp_printf("tempE : %Zd\n", temp_E);
+//     efp_scm(&tempP, tempP, temp_E, p);//
+//     mpz_set(P->x.x0.x0.x0.x0, tempP.x.x0);mpz_set(P->y.x0.x0.x0.x0, tempP.y.x0);
+
+//     mpz_clear(temp_E);
+//     fp_clear(&tempP.x);fp_clear(&tempP.y);
+// }
+
+void generate1(efp12_t *P, fp_t b, mpz_t E, mpz_t r, mpz_t p){
     efp_t tempP;fp_init(&tempP.x);fp_init(&tempP.y);tempP.inf = 0;
 
     efp_random(&tempP, b, p);
-    // gmp_printf("tempP : (%Zd, %Zd)\n", tempP.x.x0, tempP.y.x0);
-    fp_t c1, c2, c3;mpz_inits(c1.x0, c2.x0, c3.x0, NULL);
-    fp_mul(&c1, tempP.x, tempP.x, p);
-    fp_mul(&c1, c1, tempP.x, p);
-    fp_add(&c1, c1, b, p);
-    // gmp_printf("x : %Zd\n", c1.x0);
-
-    fp_mul(&c2, tempP.y, tempP.y, p);
-    // gmp_printf("y : %Zd\n", c2.x0);
-
-    mpz_t temp_E;mpz_init(temp_E);
-    mpz_sub(temp_E, p, z);mpz_cdiv_q (temp_E, temp_E, r);
-    // gmp_printf("tempE : %Zd\n", temp_E);
-    efp_scm(&tempP, tempP, temp_E, p);//
+    mpz_t exp;mpz_init(exp);
+    mpz_cdiv_q (exp, E, r);
+    efp_scm(&tempP, tempP, exp, p);
     mpz_set(P->x.x0.x0.x0.x0, tempP.x.x0);mpz_set(P->y.x0.x0.x0.x0, tempP.y.x0);
 
-    mpz_clear(temp_E);
+    mpz_clear(exp);
     fp_clear(&tempP.x);fp_clear(&tempP.y);
 }
 

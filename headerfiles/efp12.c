@@ -16,6 +16,7 @@ void efp12_printf(char *str, const efp12_t X){
         printf("inf");
         return;
     }
+    printf("%s", str);
     printf("(");
     fp12_printf("", X.x);
     printf(", ");
@@ -28,6 +29,7 @@ void efp12_println(char *str, const efp12_t X){
         printf("inf\n");
         return;
     }
+    printf("%s", str);
     printf("(");
     fp12_printf("", X.x);
     printf(", ");
