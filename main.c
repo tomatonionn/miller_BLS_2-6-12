@@ -18,7 +18,7 @@ int main (void){
 
     mpz_t E;mpz_init(E);
     rank_number(E, 12, t, p);
-    gmp_printf("有利点数:%Zd\n\n", E);
+    gmp_printf("E(Fp12):%Zd\n\n", E);
 
     fp_t b;mpz_init(b.x0);
     mpz_set_str(b.x0, "2806781539090543763928146397551071025921865095800381583843579968964127551432039332258992094003963260740981125881345582810061579481053866112", 10);
@@ -78,25 +78,25 @@ int main (void){
     // printf("最終べき掛け算の回数 : %d\n", Maverage);
 
 
-    optimal_ate_miller(&f, z, P, Q, p);
-    fp12_println("miller : ", f);
+    // optimal_ate_miller(&f, z, P, Q, p);
+    // fp12_println("f_{s,P}(Q) : ", f);
 
-    // final_exponentiation(&S, f, r, p);
-    // easy_final_exponentiation(&S, f, r, p);
-    hard_final_exponentiation(&S, f, r, p, z);
-    fp12_println("PARE : ", S);
+    // // final_exponentiation(&S, f, r, p);
+    // // easy_final_exponentiation(&S, f, r, p);
+    // hard_final_exponentiation(&S, f, r, p, z);
+    // fp12_println("f_{s,P}(Q)^{p^12-1/r} : ", S);
 
 
 
     // fp12_t f;fp12_init(&f);
     optimal_ate_miller(&f, z, P, Q, p);
-    fp12_println("miller : ", f);
+    fp12_println("f_{s,P}(Q) : ", f);
 
 
     Mcounter = 0;
     // fp12_t S;fp12_init(&S);
     final_exponentiation(&S, f, r, p);
-    fp12_println("PARE : ", S);
+    fp12_println("f_{s,P}(Q)^{p^12-1/r} : ", S);
 
 
     mpz_t s1, s2;mpz_inits(s1, s2, NULL);
@@ -104,8 +104,8 @@ int main (void){
     mpz_set_str(s2, "200", 10);
     bilinearity(P, Q, s1, s2, z, r, p);
 
-    printf("\ntest\n");
-    fp12_t W;fp12_init(&W);
-    fp12_random(&W, p);
-    fp12_println("", W);
+    // printf("\ntest\n");
+    // fp12_t W;fp12_init(&W);
+    // fp12_random(&W, p);
+    // fp12_println("", W);
 }
