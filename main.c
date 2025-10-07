@@ -99,6 +99,7 @@ int main (void){
     fp12_println("f_{s,P}(Q)^{p^12-1/r} : ", S);
 
 
+    printf("\n双線形性\n");
     mpz_t s1, s2;mpz_inits(s1, s2, NULL);
     mpz_set_str(s1, "100", 10);
     mpz_set_str(s2, "200", 10);
@@ -108,4 +109,17 @@ int main (void){
     // fp12_t W;fp12_init(&W);
     // fp12_random(&W, p);
     // fp12_println("", W);
+
+    // // efp2 weil pairing test
+    // efp12_init(&P);
+    // efp12_init(&Q);
+    // mpz_set_str(P.x.x0.x0.x0.x0, "586490", 10);
+    // mpz_set_str(P.y.x0.x0.x0.x0, "604815", 10);
+    // mpz_set_str(Q.x.x0.x0.x0.x0, "589196", 10);
+    // mpz_set_str(Q.y.x0.x0.x1.x0, "705353", 10);
+    // mpz_set_str(p, "995327", 10);
+    // mpz_set_str(r, "243", 10);
+    // efp12_println("P : ", P);
+    // efp12_println("Q : ", Q);
+    // bilinearity(P, Q, s1, s2, r, r, p);
 }

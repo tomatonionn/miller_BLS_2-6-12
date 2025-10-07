@@ -64,7 +64,7 @@ void efp2_ecd(efp2_t *R, efp2_t P, mpz_t p){
 
     // 例外処理
     if(mpz_sgn(P.y.x0.x0) == 0 && mpz_sgn(P.y.x1.x0) == 0){
-        gmp_printf("error : Yp = 0\n");
+        R->inf = 1;
         return;
     }
  

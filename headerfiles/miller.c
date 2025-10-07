@@ -619,14 +619,14 @@ void bilinearity(efp12_t P, efp12_t Q, mpz_t a, mpz_t b, mpz_t z, mpz_t r, mpz_t
     efp12_scm(&tempQ, Q, b, p);
     optimal_ate_miller(&f1, z, tempP, tempQ, p);
     final_exponentiation(&f1, f1, r, p);
-    fp12_println("e(aP, bQ) : ", f1);
+    fp12_println("e(aP, bQ)  : ", f1);
 
     // ２回目
     efp12_scm(&tempP, P, b, p);
     efp12_scm(&tempQ, Q, a, p);
     optimal_ate_miller(&f2, z, tempP, tempQ, p);
     final_exponentiation(&f2, f2, r, p);
-    fp12_println("e(bP, aQ) : ", f2);
+    fp12_println("e(bP, aQ)  : ", f2);
 
     // ３回目
     mpz_t s;mpz_init(s);mpz_mul(s, a, b);
@@ -636,11 +636,11 @@ void bilinearity(efp12_t P, efp12_t Q, mpz_t a, mpz_t b, mpz_t z, mpz_t r, mpz_t
     fp12_println("e(P, Q)^ab : ", f3);
 
     if(fp12_cmp(f1, f2) == 0 && fp12_cmp(f2, f3) == 0){
-        printf("\nSuccess!!\n");
+        printf("e(aP, bQ) == e(bP, aQ) == e(P, Q)^ab : True\n");
         return;
     }
     else{
-        printf("\nMiss...\n");
+        printf("e(aP, bQ) == e(bP, aQ) == e(P, Q)^ab : False\n");
         return;
     }
 
